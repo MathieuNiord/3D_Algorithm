@@ -15,6 +15,20 @@
 
 <body onload="webGLStart();">
 	<canvas id="WebGL-test" style="border:none;" width="800" height="600"></canvas>
+	<!--Create a list of buttons, each button has a label and is linked to a 3d model contained inside ./obj-->
+	
+	<ul>
+		<li><button type="button" onclick="OBJ1=new objmesh('bunny.obj');">Bunny</button></li>
+		<li><button type="button" onclick="OBJ1=(new objmesh('mustang.obj'));">Mustang</button></li>
+		<li><button type="button" onclick="OBJ1=(new objmesh('porsche.obj'));">Porsche</button></li>
+		<li><button type="button" onclick="OBJ1=(new objmesh('sphere.obj'));">Sphere</button></li>
+	</ul>
+
+	<ul>
+		<li><button type="button" onclick="OBJ1=new cube();">Cube</button></li>
+		<li><button type="button" onclick="isTherePlane=!isTherePlane;">Plane</button></li>
+	</ul>
+
 	<br><br>
 </body>
 

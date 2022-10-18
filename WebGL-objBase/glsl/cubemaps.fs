@@ -1,14 +1,3 @@
-/* precision mediump float;
-
-varying vec2 texCoords;
-
-uniform samplerCube uSampler;
-
-void main(void) {
-	gl_FragColor = textureCube(uSampler, vec2(texCoords.s, texCoords.t));
-}
- */
-
 precision mediump float;
 
 varying vec3 vPosition;

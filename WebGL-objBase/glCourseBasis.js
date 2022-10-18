@@ -10,6 +10,7 @@ var distCENTER;
 // =====================================================
 
 var OBJ1 = null;
+var isTherePlane = false;
 var PLANE = null;
 var CUBEMAPS = null;
 
@@ -500,6 +501,118 @@ class cubemaps {
 }
 
 // =====================================================
+// SKYBOX
+// =====================================================
+class skybox {
+
+	constructor() {
+		this.shaderName='skybox';
+		this.loaded=-1;
+		this.shader=null;
+		this.initAll();
+	}
+
+	initAll() {
+
+		const size = 1.0;
+
+		const vertices = [
+			-size, -size,
+			-size, size,
+			size, size,
+			size, -size,
+		];
+
+		this.vBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+		this.vBuffer.itemSize = 2;
+		this.vBuffer.numItems = 6;
+
+		const indices = [ 0, 1, 2, 0, 2, 3 ];
+
+		this.iBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+		this.iBuffer.itemSize = 1;
+		this.iBuffer.numItems = 6;
+
+		this.initTextures();
+		loadShaders(this);
+	}
+
+	setShadersParams() {
+
+		gl.useProgram(this.shader);
+
+		this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
+		gl.enableVertexAttribArray(this.shader.vAttrib);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
+		gl.vertexAttribPointer(this.shader.vAttrib,this.vBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
+		this.shader.uMVInversedMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrixInversed");
+	}
+
+	initTextures() {
+
+		var texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+
+		const faceInfos = [
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: './textures/cubemap_museum/pos-x.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: './textures/cubemap_museum/neg-x.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: './textures/cubemap_museum/pos-y.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: './textures/cubemap_museum/neg-y.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: './textures/cubemap_museum/pos-z.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: './textures/cubemap_museum/neg-z.jpg' },
+		];
+
+		faceInfos.forEach((faceInfo) => {
+
+			const { target, url } = faceInfo;
+			const level = 0;
+			const internalFormat = gl.RGBA;
+			const width = 512;
+			const height = 512;
+			const format = gl.RGBA;
+			const type = gl.UNSIGNED_BYTE;
+
+			gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
+
+			const texImage = new Image();
+			texImage.src = url;
+			texImage.onload = function () {
+				gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+				gl.texImage2D(target, level, internalFormat, format, type, texImage);
+				gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+			}
+		});
+
+		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+	}
+
+	setMatrixUniforms() {
+		mat4.identity(mvMatrix);
+		mat4.translate(mvMatrix, distCENTER);
+		mat4.multiply(mvMatrix, rotMatrix);
+		gl.uniform1i(this.shader.uSamplerUniform, 0);
+		gl.uniformMatrix4fv(this.shader.uMVInversedMatrixUniform, false, mat4.inverse(mvMatrix));
+	}
+
+	draw() {
+		if(this.shader && this.loaded==4) {		
+			this.setShadersParams();
+			//this.setMatrixUniforms();
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
+			gl.drawElements(gl.TRIANGLES, this.iBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+		}
+	}
+}
+
+
+// =====================================================
 // FONCTIONS GENERALES, INITIALISATIONS
 // =====================================================
 
@@ -620,10 +733,8 @@ function webGLStart() {
 	
 	PLANE = new plane();
 
-	OBJ1 = new objmesh('bunny.obj');
 	CUBE = new cube();
-	CUBEMAPS = new cubemaps();
-	//OBJ2 = new objmesh('porsche.obj');
+	SKYBOX = new skybox();
 	
 	tick();
 }
@@ -631,11 +742,9 @@ function webGLStart() {
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	//PLANE.draw();
-	//CUBE.draw();
-	CUBEMAPS.draw();
-	//OBJ1.draw();
-	//OBJ2.draw();
+	if (OBJ1) OBJ1.draw();
+	if (isTherePlane) PLANE.draw();
+	SKYBOX.draw();
 }
 
 
