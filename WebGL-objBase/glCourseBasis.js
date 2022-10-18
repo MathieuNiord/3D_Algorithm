@@ -12,6 +12,7 @@ var distCENTER;
 var OBJ1 = null;
 var isTherePlane = false;
 var PLANE = null;
+var isThereSkybox = true;
 var CUBEMAPS = null;
 
 // =====================================================
@@ -228,7 +229,6 @@ class cube {
 
 		for (var j = 0; j < faceColors.length; ++j) {
 		  const c = faceColors[j];
-		  // Repeat each color four times for the four vertices of the face
 		  colors = colors.concat(c, c, c, c);
 		}
 			
@@ -292,7 +292,7 @@ class cube {
 	}
 
 	draw() {
-		if(this.shader && this.loaded==4) {		
+		if(this.shader && this.loaded==4) {
 			this.setShadersParams();
 			this.setMatrixUniforms();
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
@@ -316,7 +316,7 @@ class cubemaps {
 
 	initAll() {
 
-		var size = 0.5;
+		var size = 10.0;
 
 		const vertices = [
 			// Front face
@@ -357,61 +357,23 @@ class cubemaps {
 		this.vBuffer.itemSize = 3;
 		this.vBuffer.numItems = 24;
 
-		const normals = [
-			0, 0, 1,
-			0, 0, 1,
-			0, 0, 1,
-			0, 0, 1,
-			
-			0, 0, -1,
-			0, 0,-1,
-			0, 0, -1,
-			0, 0, -1,
-
-			0, 1, 0,
-			0, 1, 0,
-			0, 1, 0,
-			0, 1, 0,
-
-			0, -1, 0,
-			0, -1, 0,
-			0, -1, 0,
-			0, -1, 0,
-
-			1, 0, 0,
-			1, 0, 0,
-			1, 0, 0,
-			1, 0, 0,
-
-			-1, 0, 0,
-			-1, 0, 0,
-			-1, 0, 0,
-			-1, 0, 0,
-		]
-
-		this.nBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.nBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
-		this.nBuffer.itemSize = 3;
-		this.nBuffer.numItems = 24;
-
-		/* const indices = [
+		const indices = [
 			2, 1, 0,      3, 2, 0,    // Front face
 			6, 5, 4,      7, 6, 4,    // Back face
 			10, 9, 8,     11, 10, 8,  // Top face
 			14, 13, 12,   15, 14, 12, // Bottom face
 			18, 17, 16,   19, 18, 16, // Right face
 			22, 21, 20,   23, 22, 20  // Left face
-		]; */
+		];
 
-		const indices = [
+		/* const indices = [
 			0, 1, 2,      0, 2, 3,    // Front face
 			4, 5, 6,      4, 6, 7,    // Back face
 			8, 9, 10,     8, 10, 11,  // Top face
 			12, 13, 14,   12, 14, 15, // Bottom face
 			16, 17, 18,   16, 18, 19, // Right face
 			20, 21, 22,   20, 22, 23  // Left face
-		];
+		]; */
 
 		this.iBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
@@ -432,61 +394,61 @@ class cubemaps {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
 		gl.vertexAttribPointer(this.shader.vAttrib,this.vBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-		this.shader.nAttrib = gl.getAttribLocation(this.shader, "aNormal");
-		gl.enableVertexAttribArray(this.shader.nAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.nBuffer);
-		gl.vertexAttribPointer(this.shader.nAttrib,this.nBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
 		this.shader.uMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
+		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
 	}
 
 	initTextures() {
 
-		var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+		const isPowerof2 = (value) => { return (value && (value & (value - 1))) === 0; }
+
+		this.texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
 
 		const faceInfos = [
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: './textures/cubemap_museum/neg-z.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: './textures/cubemap_museum/pos-z.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: './textures/cubemap_museum/neg-y.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: './textures/cubemap_museum/pos-y.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: './textures/cubemap_museum/neg-x.jpg' },
 			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: './textures/cubemap_museum/pos-x.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: './textures/cubemap_museum/neg-x.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: './textures/cubemap_museum/pos-y.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: './textures/cubemap_museum/neg-y.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: './textures/cubemap_museum/pos-z.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: './textures/cubemap_museum/neg-z.jpg' },
 		];
 
 		faceInfos.forEach((faceInfo) => {
 
-			const { target, url } = faceInfo;
-			const level = 0;
-			const internalFormat = gl.RGBA;
-			const width = 512;
-			const height = 512;
-			const format = gl.RGBA;
-			const type = gl.UNSIGNED_BYTE;
+			var { target, url } = faceInfo;
 
-			gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
-
-			const texImage = new Image();
+			var texImage = new Image();
 			texImage.src = url;
-			texImage.onload = function () {
-				gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-				gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-				gl.texImage2D(target, level, internalFormat, format, type, texImage);
-				gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-			}
+			this.texture.image = texImage
+			
+			texImage.onload = function (texture, target, image) {
+				return function() {
+					gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+					gl.texImage2D(target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+					if (isPowerof2(image.width) && isPowerof2(image.height)) gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+					else {
+						gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+						gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+						gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+					}
+				};
+			}(this.texture, target, texImage);
+
 		});
 
-		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
 	}
 
 	setMatrixUniforms() {
 		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, distCENTER);
+		mat4.translate(mvMatrix, vec3.create([0,-0.2,-1])); // TODO : Remettre distCenter si on veut pouvoir zoomer ou sortir
 		mat4.multiply(mvMatrix, rotMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.uMatrixUniform, false, mvMatrix);
+		gl.uniform1i(this.shader.uSamplerUniform, 0);
 	}
 
 	draw() {
@@ -734,7 +696,7 @@ function webGLStart() {
 	PLANE = new plane();
 
 	CUBE = new cube();
-	SKYBOX = new skybox();
+	CUBEMAPS = new cubemaps();
 	
 	tick();
 }
@@ -744,7 +706,8 @@ function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	if (OBJ1) OBJ1.draw();
 	if (isTherePlane) PLANE.draw();
-	SKYBOX.draw();
+	if (isThereSkybox) CUBEMAPS.draw();
+	//SKYBOX.draw();
 }
 
 
