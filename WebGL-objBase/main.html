@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 
 <head>
-	<title>WebGL - Canvas test</title>
+	<title>WebGL</title>
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link rel="stylesheet" type="text/css" href="style/main.css">
 	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 
 	<script type="text/javascript" src="glMatrix.js"></script>
@@ -9,26 +11,76 @@
 	<script type="text/javascript" src="colors.js"></script>
 	<script type="text/javascript" src="glCourseBasis.js"></script>
 	<script type="text/javascript" src="objLoader.js"></script>
+	<script type="text/javascript" src="style/style.js"></script>
 
 </head>
 
 
 <body onload="webGLStart();">
-	<canvas id="WebGL-test" style="border:none;" width="800" height="600"></canvas>
-	<!--Create a list of buttons, each button has a label and is linked to a 3d model contained inside ./obj-->
-	
-	<ul>
-		<li><button type="button" onclick="if (OBJ1 !== BUNNY) OBJ1 = BUNNY;">Bunny</button></li>
-		<li><button type="button" onclick="if (OBJ1 !== MUSTANG) OBJ1 = MUSTANG;">Mustang</button></li>
-		<li><button type="button" onclick="if (OBJ1 !== PORSCHE) OBJ1 = PORSCHE;">Porsche</button></li>
-		<li><button type="button" onclick="if (OBJ1 !== SPHERE) OBJ1 = SPHERE;">Sphere</button></li>
-	</ul>
 
-	<ul>
-		<li><button type="button" onclick="if (OBJ1 !== CUBE) OBJ1 = CUBE;">Cube</button></li>
-		<li><button type="button" onclick="isTherePlane=!isTherePlane;">Plane</button></li>
-		<li><button type="button" onclick="isThereSkybox=!isThereSkybox;">Skybox</button></li>
-	</ul>
+	<div id="wrapper">
+
+		<!-- Canvas on the left side -->
+		<div id="canvas">
+			<canvas id="WebGL-test" style="border:none;" width="800" height="600"></canvas>
+		</div>
+		
+		<!-- Configuration on the right side -->
+		<div id="config">
+			<div class="tab">
+				<button class="tablinks" onclick="openTab(event, 'models')">3D Models</button>
+				<button class="tablinks" onclick="openTab(event, 'cube')">Cube</button>
+				<button class="tablinks" onclick="openTab(event, 'configuration')">Configuration</button>
+			</div>
+
+			<div id="models" class="tabcontent">
+				<br><br>
+				<ul>
+					<li><button type="button" onclick="if (OBJ1 !== BUNNY) OBJ1 = BUNNY;">Bunny</button></li>
+					<li><button type="button" onclick="if (OBJ1 !== MUSTANG) OBJ1 = MUSTANG;">Mustang</button></li>
+					<li><button type="button" onclick="if (OBJ1 !== PORSCHE) OBJ1 = PORSCHE;">Porsche</button></li>
+					<li><button type="button" onclick="if (OBJ1 !== SPHERE) OBJ1 = SPHERE;">Sphere</button></li>
+				</ul>
+			</div>
+
+			<div id="cube" class="tabcontent">
+				<br><br>
+				<ul>
+					<li><button type="button" onclick="if (OBJ1 !== CUBE) OBJ1 = CUBE;">Cube</button></li>
+					<li>
+						<input type="checkbox" name="mirror" onclick="isMirroring = !isMirroring;">
+						<label for="mirror">Mirror Texture</label>
+					</li>
+				</ul>
+			</div>
+
+			<div id="configuration" class="tabcontent">
+				<br><br>
+				<ul>
+					<li>
+						<input type="checkbox" name="Plane" onclick="isTherePlane=!isTherePlane;">
+						<label for="Plane">Plane</label>
+					</li>
+					<li>
+						<input type="checkbox" onclick="isThereSkybox=!isThereSkybox;" checked>
+						<label for="Skybox">Skybox</label>
+						<select name="scene" onchange="
+							let selected = this.value;
+							if (SKYBOX_TEXTURES !== selected) {
+								SKYBOX_TEXTURES = selected;
+								delete SKYBOX;
+								SKYBOX = new cubemaps();
+							}
+						">
+							<option value="ocean" selected>Ocean</option>
+							<option value="museum">Museum</option>
+						</select>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
 
 	<br><br>
 </body>
