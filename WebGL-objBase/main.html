@@ -18,14 +18,14 @@
 	<!--Create a list of buttons, each button has a label and is linked to a 3d model contained inside ./obj-->
 	
 	<ul>
-		<li><button type="button" onclick="OBJ1=new objmesh('bunny.obj');">Bunny</button></li>
-		<li><button type="button" onclick="OBJ1=(new objmesh('mustang.obj'));">Mustang</button></li>
-		<li><button type="button" onclick="OBJ1=(new objmesh('porsche.obj'));">Porsche</button></li>
-		<li><button type="button" onclick="OBJ1=(new objmesh('sphere.obj'));">Sphere</button></li>
+		<li><button type="button" onclick="if (OBJ1 !== BUNNY) OBJ1 = BUNNY;">Bunny</button></li>
+		<li><button type="button" onclick="if (OBJ1 !== MUSTANG) OBJ1 = MUSTANG;">Mustang</button></li>
+		<li><button type="button" onclick="if (OBJ1 !== PORSCHE) OBJ1 = PORSCHE;">Porsche</button></li>
+		<li><button type="button" onclick="if (OBJ1 !== SPHERE) OBJ1 = SPHERE;">Sphere</button></li>
 	</ul>
 
 	<ul>
-		<li><button type="button" onclick="OBJ1=new cube();">Cube</button></li>
+		<li><button type="button" onclick="if (OBJ1 !== CUBE) OBJ1 = CUBE;">Cube</button></li>
 		<li><button type="button" onclick="isTherePlane=!isTherePlane;">Plane</button></li>
 		<li><button type="button" onclick="isThereSkybox=!isThereSkybox;">Skybox</button></li>
 	</ul>

@@ -10,6 +10,7 @@ var distCENTER;
 // =====================================================
 
 var OBJ1 = null;
+var BUNNY, MUSTANG, PORSCHE, SPHERE, CUBE = null;
 var isTherePlane = false;
 var PLANE = null;
 var isThereSkybox = true;
@@ -166,7 +167,7 @@ class plane {
 class cube {
 
 	constructor() {
-		this.shaderName='cube_colorized';
+		this.shaderName='mirror';
 		this.loaded=-1;
 		this.shader=null;
 		this.initAll();
@@ -215,7 +216,7 @@ class cube {
 		this.vBuffer.itemSize = 3;
 		this.vBuffer.numItems = 24;
 
-		// Colors
+/* 		// Colors
 		const faceColors = [
 			Colors.white,	// Front face: white
 			Colors.red,		// Back face: red
@@ -236,7 +237,46 @@ class cube {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 		this.cBuffer.itemSize = 3;
-		this.cBuffer.numItems = 24;
+		this.cBuffer.numItems = 24; */
+
+		const normals = [
+			// Front face
+			0.0, 0.0, 1.0,
+			0.0, 0.0, 1.0,
+			0.0, 0.0, 1.0,
+			0.0, 0.0, 1.0,
+			// Back face
+			0.0, 0.0, -1.0,
+			0.0, 0.0, -1.0,
+			0.0, 0.0, -1.0,
+			0.0, 0.0, -1.0,
+			// Top face
+			0.0, 1.0, 0.0,
+			0.0, 1.0, 0.0,
+			0.0, 1.0, 0.0,
+			0.0, 1.0, 0.0,
+			// Bottom face
+			0.0, -1.0, 0.0,
+			0.0, -1.0, 0.0,
+			0.0, -1.0, 0.0,
+			0.0, -1.0, 0.0,
+			// Right face
+			1.0, 0.0, 0.0,
+			1.0, 0.0, 0.0,
+			1.0, 0.0, 0.0,
+			1.0, 0.0, 0.0,
+			// Left face
+			-1.0, 0.0, 0.0,
+			-1.0, 0.0, 0.0,
+			-1.0, 0.0, 0.0,
+			-1.0, 0.0, 0.0
+		]
+
+		this.nBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.nBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+		this.nBuffer.itemSize = 3;
+		this.nBuffer.numItems = 24;
 
 		const indices = [
 			0, 1, 2,      0, 2, 3,    // Front face
@@ -274,21 +314,36 @@ class cube {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
 		gl.vertexAttribPointer(this.shader.vAttrib,this.vBuffer.itemSize, gl.FLOAT, false, 0, 0);
 		
-		this.shader.cAttrib = gl.getAttribLocation(this.shader, "aVertexColor");
+		/* this.shader.cAttrib = gl.getAttribLocation(this.shader, "aVertexColor");
 		gl.enableVertexAttribArray(this.shader.cAttrib);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-		gl.vertexAttribPointer(this.shader.cAttrib,this.cBuffer.itemSize, gl.FLOAT, false, 0, 0);
+		gl.vertexAttribPointer(this.shader.cAttrib,this.cBuffer.itemSize, gl.FLOAT, false, 0, 0); */
+
+		this.shader.nAttrib = gl.getAttribLocation(this.shader, "aVertexNormal");
+		gl.enableVertexAttribArray(this.shader.nAttrib);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.nBuffer);
+		gl.vertexAttribPointer(this.shader.nAttrib,this.nBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
+		this.shader.uWMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
+
+		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
+		this.shader.uInversedRotationMatrixUniform = gl.getUniformLocation(this.shader, "uInversedRotationMatrix");
 	}
 
 	setMatrixUniforms() {
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, distCENTER);
 		mat4.multiply(mvMatrix, rotMatrix);
+		
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
+		gl.uniformMatrix4fv(this.shader.uWMatrixUniform, false, rotMatrix);
+		
+		gl.uniform1i(this.shader.uSamplerUniform, 0);
+		gl.uniformMatrix4fv(this.shader.uInversedRotationMatrixUniform, false, mat4.inverse(rotMatrix));
+		mat4.inverse(rotMatrix);
 	}
 
 	draw() {
@@ -407,12 +462,12 @@ class cubemaps {
 		gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
 
 		const faceInfos = [
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: './textures/cubemap_museum/pos-x.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: './textures/cubemap_museum/neg-x.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: './textures/cubemap_museum/pos-y.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: './textures/cubemap_museum/neg-y.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: './textures/cubemap_museum/pos-z.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: './textures/cubemap_museum/neg-z.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: './textures/ocean/pos-x.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: './textures/ocean/neg-x.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: './textures/ocean/pos-y.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: './textures/ocean/neg-y.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: './textures/ocean/pos-z.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: './textures/ocean/neg-z.jpg' },
 		];
 
 		faceInfos.forEach((faceInfo) => {
@@ -444,7 +499,7 @@ class cubemaps {
 
 	setMatrixUniforms() {
 		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, vec3.create([0,-0.2,-1])); // TODO : Remettre distCenter si on veut pouvoir zoomer ou sortir
+		mat4.translate(mvMatrix, distCENTER); // TODO : Remettre distCenter si on veut pouvoir zoomer ou sortir
 		mat4.multiply(mvMatrix, rotMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.uMatrixUniform, false, mvMatrix);
@@ -460,117 +515,6 @@ class cubemaps {
 		}
 	}
 
-}
-
-// =====================================================
-// SKYBOX
-// =====================================================
-class skybox {
-
-	constructor() {
-		this.shaderName='skybox';
-		this.loaded=-1;
-		this.shader=null;
-		this.initAll();
-	}
-
-	initAll() {
-
-		const size = 1.0;
-
-		const vertices = [
-			-size, -size,
-			-size, size,
-			size, size,
-			size, -size,
-		];
-
-		this.vBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-		this.vBuffer.itemSize = 2;
-		this.vBuffer.numItems = 6;
-
-		const indices = [ 0, 1, 2, 0, 2, 3 ];
-
-		this.iBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-		this.iBuffer.itemSize = 1;
-		this.iBuffer.numItems = 6;
-
-		this.initTextures();
-		loadShaders(this);
-	}
-
-	setShadersParams() {
-
-		gl.useProgram(this.shader);
-
-		this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
-		gl.enableVertexAttribArray(this.shader.vAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.vertexAttribPointer(this.shader.vAttrib,this.vBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
-		this.shader.uMVInversedMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrixInversed");
-	}
-
-	initTextures() {
-
-		var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-
-		const faceInfos = [
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: './textures/cubemap_museum/pos-x.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: './textures/cubemap_museum/neg-x.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: './textures/cubemap_museum/pos-y.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: './textures/cubemap_museum/neg-y.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: './textures/cubemap_museum/pos-z.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: './textures/cubemap_museum/neg-z.jpg' },
-		];
-
-		faceInfos.forEach((faceInfo) => {
-
-			const { target, url } = faceInfo;
-			const level = 0;
-			const internalFormat = gl.RGBA;
-			const width = 512;
-			const height = 512;
-			const format = gl.RGBA;
-			const type = gl.UNSIGNED_BYTE;
-
-			gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
-
-			const texImage = new Image();
-			texImage.src = url;
-			texImage.onload = function () {
-				gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-				gl.texImage2D(target, level, internalFormat, format, type, texImage);
-				gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-			}
-		});
-
-		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-	}
-
-	setMatrixUniforms() {
-		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, distCENTER);
-		mat4.multiply(mvMatrix, rotMatrix);
-		gl.uniform1i(this.shader.uSamplerUniform, 0);
-		gl.uniformMatrix4fv(this.shader.uMVInversedMatrixUniform, false, mat4.inverse(mvMatrix));
-	}
-
-	draw() {
-		if(this.shader && this.loaded==4) {		
-			this.setShadersParams();
-			//this.setMatrixUniforms();
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
-			gl.drawElements(gl.TRIANGLES, this.iBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-		}
-	}
 }
 
 
@@ -695,6 +639,11 @@ function webGLStart() {
 	
 	PLANE = new plane();
 
+	BUNNY = new objmesh("bunny.obj");
+	MUSTANG = new objmesh("mustang.obj");
+	PORSCHE = new objmesh("porsche.obj");
+	SPHERE = new objmesh("sphere.obj");
+
 	CUBE = new cube();
 	CUBEMAPS = new cubemaps();
 	
@@ -707,8 +656,6 @@ function drawScene() {
 	if (OBJ1) OBJ1.draw();
 	if (isTherePlane) PLANE.draw();
 	if (isThereSkybox) CUBEMAPS.draw();
-	//SKYBOX.draw();
 }
-
 
 
