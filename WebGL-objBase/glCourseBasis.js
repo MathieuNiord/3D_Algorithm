@@ -7,14 +7,40 @@ var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 var rotMatrix = mat4.create();
 var distCENTER;
-// =====================================================
 
-var OBJ1 = null;
-var BUNNY, MUSTANG, PORSCHE, SPHERE, CUBE = null;
+// =====================================================
+var OBJ1 = null;	// The object that is rendered
+var BUNNY, MUSTANG, PORSCHE, SPHERE, CUBE, PLANE = null;
+var SKYBOX = null;
+
+// =====================================================
+var CUBE_FACE_COLORS = {
+	FRONT: 	Colors.white,	// Front face: white
+	BACK:	Colors.red,		// Back face: red
+	TOP:	Colors.green,	// Top face: green
+	BOTTOM:	Colors.blue,	// Bottom face: blue
+	RIGHT:	Colors.yellow,	// Right face: yellow
+	LEFT:	Colors.purple	// Left face: purple
+}
+
+// =====================================================
 var isTherePlane = false;
-var PLANE = null;
 var isThereSkybox = true;
-var CUBEMAPS = null;
+var SKYBOX_TEXTURES = "ocean";
+
+// =====================================================
+var isMirroring = false;
+var isReflecting = false;
+const FRESNEL_INDICES = {
+	"AIR": 1.0,
+	"GLASS": 1.5,
+	"DIAMOND": 2.42,
+	"ICE": 1.31,
+	"OIL": 1.46,
+	"WATER": 1.33,
+	"STEEL": 2.0,
+}
+var FRESNEL_INDICE = FRESNEL_INDICES.AIR;
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -48,9 +74,15 @@ class objmesh {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.normalBuffer);
 		gl.vertexAttribPointer(this.shader.nAttrib, this.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+		// Setting matrix uniforms
 		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
+		this.shader.uInversedRotationMatrixUniform = gl.getUniformLocation(this.shader, "uInversedRotationMatrix");
+
+		// Settting mirroring
+		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
+		this.shader.uMirrorUniform = gl.getUniformLocation(this.shader, "uIsMirroring");
 	}
 	
 	// --------------------------------------------
@@ -61,6 +93,10 @@ class objmesh {
 		gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
+		gl.uniformMatrix4fv(this.shader.uInversedRotationMatrixUniform, false, mat4.inverse(rotMatrix));
+		gl.uniform1i(this.shader.uSamplerUniform, 0);
+		gl.uniform1i(this.shader.uMirrorUniform, isMirroring);
+		mat4.inverse(rotMatrix);
 	}
 	
 	// --------------------------------------------
@@ -167,7 +203,7 @@ class plane {
 class cube {
 
 	constructor() {
-		this.shaderName='mirror';
+		this.shaderName = 'geometry';
 		this.loaded=-1;
 		this.shader=null;
 		this.initAll();
@@ -216,29 +252,22 @@ class cube {
 		this.vBuffer.itemSize = 3;
 		this.vBuffer.numItems = 24;
 
-/* 		// Colors
-		const faceColors = [
-			Colors.white,	// Front face: white
-			Colors.red,		// Back face: red
-			Colors.green,	// Top face: green
-			Colors.blue,	// Bottom face: blue
-			Colors.yellow,	// Right face: yellow
-			Colors.purple	// Left face: purple
-		];
-
+		// Colors
 		var colors = [];
 
-		for (var j = 0; j < faceColors.length; ++j) {
-		  const c = faceColors[j];
-		  colors = colors.concat(c, c, c, c);
-		}
+		Object.keys(CUBE_FACE_COLORS).forEach(function (key) {
+			const c = CUBE_FACE_COLORS[key];
+			console.log(c);
+			colors = colors.concat(c, c, c, c);
+		});
 			
 		this.cBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 		this.cBuffer.itemSize = 3;
-		this.cBuffer.numItems = 24; */
+		this.cBuffer.numItems = 24;
 
+		// Mirror
 		const normals = [
 			// Front face
 			0.0, 0.0, 1.0,
@@ -287,15 +316,6 @@ class cube {
 			20, 21, 22,   20, 22, 23  // Left face
 		];
 
-		/* const indices = [
-			2, 1, 0,      3, 2, 0,    // Front face
-			6, 5, 4,      7, 6, 4,    // Back face
-			10, 9, 8,     11, 10, 8,  // Top face
-			14, 13, 12,   15, 14, 12, // Bottom face
-			18, 17, 16,   19, 18, 16, // Right face
-			22, 21, 20,   23, 22, 20  // Left face
-		]; */
-
 		this.iBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
@@ -309,27 +329,33 @@ class cube {
 
 		gl.useProgram(this.shader);
 
+		// Vertices
 		this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
 		gl.enableVertexAttribArray(this.shader.vAttrib);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
 		gl.vertexAttribPointer(this.shader.vAttrib,this.vBuffer.itemSize, gl.FLOAT, false, 0, 0);
 		
-		/* this.shader.cAttrib = gl.getAttribLocation(this.shader, "aVertexColor");
+		// Colors
+		this.shader.cAttrib = gl.getAttribLocation(this.shader, "aVertexColor");
 		gl.enableVertexAttribArray(this.shader.cAttrib);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-		gl.vertexAttribPointer(this.shader.cAttrib,this.cBuffer.itemSize, gl.FLOAT, false, 0, 0); */
+		gl.vertexAttribPointer(this.shader.cAttrib,this.cBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+		// Normals
 		this.shader.nAttrib = gl.getAttribLocation(this.shader, "aVertexNormal");
 		gl.enableVertexAttribArray(this.shader.nAttrib);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.nBuffer);
 		gl.vertexAttribPointer(this.shader.nAttrib,this.nBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+		// Setting matrix
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
-		this.shader.uWMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
-
-		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
+		this.shader.uRMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
 		this.shader.uInversedRotationMatrixUniform = gl.getUniformLocation(this.shader, "uInversedRotationMatrix");
+
+		// Settting mirroring
+		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
+		this.shader.uMirrorUniform = gl.getUniformLocation(this.shader, "uIsMirroring");
 	}
 
 	setMatrixUniforms() {
@@ -339,10 +365,12 @@ class cube {
 		
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
-		gl.uniformMatrix4fv(this.shader.uWMatrixUniform, false, rotMatrix);
-		
-		gl.uniform1i(this.shader.uSamplerUniform, 0);
+		gl.uniformMatrix4fv(this.shader.uRMatrixUniform, false, rotMatrix);
 		gl.uniformMatrix4fv(this.shader.uInversedRotationMatrixUniform, false, mat4.inverse(rotMatrix));
+
+		gl.uniform1i(this.shader.uSamplerUniform, 0);
+		gl.uniform1i(this.shader.uMirrorUniform, isMirroring);
+
 		mat4.inverse(rotMatrix);
 	}
 
@@ -421,15 +449,6 @@ class cubemaps {
 			22, 21, 20,   23, 22, 20  // Left face
 		];
 
-		/* const indices = [
-			0, 1, 2,      0, 2, 3,    // Front face
-			4, 5, 6,      4, 6, 7,    // Back face
-			8, 9, 10,     8, 10, 11,  // Top face
-			12, 13, 14,   12, 14, 15, // Bottom face
-			16, 17, 18,   16, 18, 19, // Right face
-			20, 21, 22,   20, 22, 23  // Left face
-		]; */
-
 		this.iBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
@@ -462,12 +481,12 @@ class cubemaps {
 		gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
 
 		const faceInfos = [
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: './textures/ocean/pos-x.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: './textures/ocean/neg-x.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: './textures/ocean/pos-y.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: './textures/ocean/neg-y.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: './textures/ocean/pos-z.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: './textures/ocean/neg-z.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/pos-x.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/neg-x.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/pos-y.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/neg-y.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/pos-z.jpg' },
+			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/neg-z.jpg' },
 		];
 
 		faceInfos.forEach((faceInfo) => {
@@ -645,7 +664,7 @@ function webGLStart() {
 	SPHERE = new objmesh("sphere.obj");
 
 	CUBE = new cube();
-	CUBEMAPS = new cubemaps();
+	SKYBOX = new cubemaps();
 	
 	tick();
 }
@@ -655,7 +674,5 @@ function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	if (OBJ1) OBJ1.draw();
 	if (isTherePlane) PLANE.draw();
-	if (isThereSkybox) CUBEMAPS.draw();
+	if (isThereSkybox) SKYBOX.draw();
 }
-
-
