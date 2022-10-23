@@ -15,18 +15,48 @@ var SKYBOX = null;
 
 // =====================================================
 var CUBE_FACE_COLORS = {
-	FRONT: 	Colors.white,	// Front face: white
-	BACK:	Colors.red,		// Back face: red
-	TOP:	Colors.green,	// Top face: green
-	BOTTOM:	Colors.blue,	// Bottom face: blue
-	RIGHT:	Colors.yellow,	// Right face: yellow
-	LEFT:	Colors.purple	// Left face: purple
+	FRONT: 	Colors['white'],	// Front face: white
+	BACK:	Colors['red'],		// Back face: red
+	TOP:	Colors['green'],	// Top face: green
+	BOTTOM:	Colors['blue'],		// Bottom face: blue
+	RIGHT:	Colors['yellow'],	// Right face: yellow
+	LEFT:	Colors['purple']	// Left face: purple
 }
 
 // =====================================================
 var isTherePlane = false;
 var isThereSkybox = true;
-var SKYBOX_TEXTURES = "ocean";
+var SKYBOX_SCENE = "ocean";
+
+// =====================================================
+let SKYBOX_TEXTURES_URL = "res/textures/skybox/";
+let IMAGES_FOLDERS = ['ocean', 'museum'];
+let IMAGES_NAMES = ['pos-x', 'neg-x', 'pos-y', 'neg-y', 'pos-z', 'neg-z'];
+var IMAGES = {};
+// Images pre-loading inside a Promise
+let preLoadingImages = new Promise((resolve, reject) => {
+
+	var promises = {};
+
+	for (let i = 0; i < IMAGES_FOLDERS.length; i++) {
+
+		var images = [];
+
+		for (let j = 0; j < IMAGES_NAMES.length; j++) {
+			const image = new Image();
+			image.src = `${SKYBOX_TEXTURES_URL}${IMAGES_FOLDERS[i]}/${IMAGES_NAMES[j]}.jpg`;
+			images.push(image);
+		}
+
+		promises[IMAGES_FOLDERS[i]] = images;
+	}
+
+	console.log('images Loaded');
+
+	console.log(promises);
+	resolve(promises);
+	reject("error");
+});
 
 // =====================================================
 var isMirroring = false;
@@ -109,7 +139,6 @@ class objmesh {
 		}
 	}
 }
-
 
 
 // =====================================================
@@ -196,6 +225,7 @@ class plane {
 
 }
 
+
 // =====================================================
 // CUBE 3D, Figure géométrique
 // =====================================================
@@ -257,7 +287,6 @@ class cube {
 
 		Object.keys(CUBE_FACE_COLORS).forEach(function (key) {
 			const c = CUBE_FACE_COLORS[key];
-			console.log(c);
 			colors = colors.concat(c, c, c, c);
 		});
 			
@@ -356,6 +385,8 @@ class cube {
 		// Settting mirroring
 		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
 		this.shader.uMirrorUniform = gl.getUniformLocation(this.shader, "uIsMirroring");
+		gl.uniform1i(this.shader.uSamplerUniform, 0);
+		gl.uniform1i(this.shader.uMirrorUniform, isMirroring);
 	}
 
 	setMatrixUniforms() {
@@ -367,9 +398,6 @@ class cube {
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.uRMatrixUniform, false, rotMatrix);
 		gl.uniformMatrix4fv(this.shader.uInversedRotationMatrixUniform, false, mat4.inverse(rotMatrix));
-
-		gl.uniform1i(this.shader.uSamplerUniform, 0);
-		gl.uniform1i(this.shader.uMirrorUniform, isMirroring);
 
 		mat4.inverse(rotMatrix);
 	}
@@ -384,6 +412,7 @@ class cube {
 	}
 
 }
+
 
 // =====================================================
 // CUBEMAPS
@@ -455,7 +484,7 @@ class cubemaps {
 		this.iBuffer.itemSize = 1;
 		this.iBuffer.numItems = 36;
 
-		this.initTextures();
+		this.initCubeTextures();
 		loadShaders(this);
 	}
 
@@ -471,49 +500,47 @@ class cubemaps {
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
 		this.shader.uMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
+
+		gl.uniform1i(this.shader.uSamplerUniform, 0);
 	}
 
-	initTextures() {
+	initCubeTextures() {
 
 		const isPowerof2 = (value) => { return (value && (value & (value - 1))) === 0; }
 
 		this.texture = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
 
-		const faceInfos = [
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/pos-x.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/neg-x.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/pos-y.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/neg-y.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/pos-z.jpg' },
-			{ target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: 'res/textures/skybox/' + SKYBOX_TEXTURES + '/neg-z.jpg' },
+		const targets = [
+			gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+			gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+			gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+			gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+			gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+			gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
 		];
 
-		faceInfos.forEach((faceInfo) => {
+		for (var i = 0; i < targets.length; i++) {
 
-			var { target, url } = faceInfo;
+			this.texture.image = IMAGES[SKYBOX_SCENE][i];
 
-			var texImage = new Image();
-			texImage.src = url;
-			this.texture.image = texImage
+			const load = (texture, target, image) => {
+				gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+				gl.texImage2D(target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+				if (isPowerof2(image.width) && isPowerof2(image.height)) gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+				else {
+					gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+					gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+					gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+				}
+			}
 			
-			texImage.onload = function (texture, target, image) {
-				return function() {
-					gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-					gl.texImage2D(target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-					if (isPowerof2(image.width) && isPowerof2(image.height)) gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-					else {
-						gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-						gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-						gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-					}
-				};
-			}(this.texture, target, texImage);
+			load(this.texture, targets[i], this.texture.image);
 
-		});
+		}
 
-		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
+		//gl.activeTexture(gl.TEXTURE0);
+		//gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
 	}
 
 	setMatrixUniforms() {
@@ -522,7 +549,6 @@ class cubemaps {
 		mat4.multiply(mvMatrix, rotMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.uMatrixUniform, false, mvMatrix);
-		gl.uniform1i(this.shader.uSamplerUniform, 0);
 	}
 
 	draw() {
@@ -560,7 +586,6 @@ function initGL(canvas)
 	}
 }
 
-
 // =====================================================
 loadObjFile = function(OBJ3D)
 {
@@ -577,8 +602,6 @@ loadObjFile = function(OBJ3D)
 	xhttp.open("GET", OBJ3D.objName, true);
 	xhttp.send();
 }
-
-
 
 // =====================================================
 function loadShaders(Obj3D) {
@@ -636,37 +659,52 @@ function compileShaders(Obj3D)
 	}
 }
 
-
 // =====================================================
 function webGLStart() {
 	
-	var canvas = document.getElementById("WebGL-test");
+	preLoadingImages
+	// Pre-loading images for textures (heavy images)
+	.then(
+		function(value) { IMAGES = value; },
+		function(error) { throw error; }
+	)
+	// Launching the program
+	.finally(() => {
 
-	canvas.onmousedown = handleMouseDown;
-	document.onmouseup = handleMouseUp;
-	document.onmousemove = handleMouseMove;
-	canvas.onwheel = handleMouseWheel;
+		// Canvas and GL context
+		// =======================
+		var canvas = document.getElementById("WebGL-test");
 
-	initGL(canvas);
-
-	mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-	mat4.identity(rotMatrix);
-	mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
-	mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
-
-	distCENTER = vec3.create([0,-0.2,-3]);
+		canvas.onmousedown = handleMouseDown;
+		document.onmouseup = handleMouseUp;
+		document.onmousemove = handleMouseMove;
+		canvas.onwheel = handleMouseWheel;
 	
-	PLANE = new plane();
-
-	BUNNY = new objmesh("bunny.obj");
-	MUSTANG = new objmesh("mustang.obj");
-	PORSCHE = new objmesh("porsche.obj");
-	SPHERE = new objmesh("sphere.obj");
-
-	CUBE = new cube();
-	SKYBOX = new cubemaps();
+		initGL(canvas);
 	
-	tick();
+		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+		mat4.identity(rotMatrix);
+		mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
+		mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
+	
+		distCENTER = vec3.create([0,-0.2,-3]);
+		// =======================
+	
+		// Objects initializations
+		// =======================
+		PLANE = new plane();
+		SKYBOX = new cubemaps();
+		BUNNY = new objmesh("bunny.obj");
+		MUSTANG = new objmesh("mustang.obj");
+		PORSCHE = new objmesh("porsche.obj");
+		SPHERE = new objmesh("sphere.obj");
+		CUBE = new cube();
+		// =======================
+			
+		tick();
+	})
+	// Catching errors
+	.catch((error) => { console.log(error); });
 }
 
 // =====================================================
@@ -675,4 +713,15 @@ function drawScene() {
 	if (OBJ1) OBJ1.draw();
 	if (isTherePlane) PLANE.draw();
 	if (isThereSkybox) SKYBOX.draw();
+}
+
+// Debugging
+function showImages() {
+	Object.keys(IMAGES).forEach(function(key) {
+		IMAGES[key].forEach(function(image) {
+			var img = document.createElement("img");
+			img.src = image.src;
+			document.body.appendChild(img);
+		});
+	});
 }
