@@ -1,4 +1,3 @@
-
 // =====================================================
 var gl;
 
@@ -14,6 +13,7 @@ var BUNNY, MUSTANG, PORSCHE, SPHERE, CUBE, PLANE = null;
 var SKYBOX = null;
 
 // =====================================================
+var MODEL_COLOR = [0.8, 0.4, 0.4];
 var CUBE_FACE_COLORS = {
 	FRONT: 	Colors['white'],	// Front face: white
 	BACK:	Colors['red'],		// Back face: red
@@ -51,9 +51,8 @@ let preLoadingImages = new Promise((resolve, reject) => {
 		promises[IMAGES_FOLDERS[i]] = images;
 	}
 
-	console.log('images Loaded');
+	console.log('Images loaded');
 
-	console.log(promises);
 	resolve(promises);
 	reject("error");
 });
@@ -104,6 +103,10 @@ class objmesh {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.normalBuffer);
 		gl.vertexAttribPointer(this.shader.nAttrib, this.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+		// Colors
+		this.shader.uColor = gl.getUniformLocation(this.shader, "uColor");
+		gl.uniform3fv(this.shader.uColor, MODEL_COLOR);
+
 		// Setting matrix uniforms
 		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
@@ -113,6 +116,8 @@ class objmesh {
 		// Settting mirroring
 		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
 		this.shader.uMirrorUniform = gl.getUniformLocation(this.shader, "uIsMirroring");
+		gl.uniform1i(this.shader.uSamplerUniform, 0);
+		gl.uniform1i(this.shader.uMirrorUniform, isMirroring);
 	}
 	
 	// --------------------------------------------
@@ -124,8 +129,6 @@ class objmesh {
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.uInversedRotationMatrixUniform, false, mat4.inverse(rotMatrix));
-		gl.uniform1i(this.shader.uSamplerUniform, 0);
-		gl.uniform1i(this.shader.uMirrorUniform, isMirroring);
 		mat4.inverse(rotMatrix);
 	}
 	
