@@ -66,8 +66,8 @@
 						<label for="Skybox">Skybox</label>
 						<select name="scene" onchange="
 							let selected = this.value;
-							if (SKYBOX_TEXTURES !== selected) {
-								SKYBOX_TEXTURES = selected;
+							if (SKYBOX_SCENE !== selected) {
+								SKYBOX_SCENE = selected;
 								delete SKYBOX;
 								SKYBOX = new cubemaps();
 							}
