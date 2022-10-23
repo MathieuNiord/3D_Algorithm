@@ -1,6 +1,6 @@
 precision mediump float;
 
-varying vec4 vColor;
+varying vec3 vColor;
 varying vec4 vPosition;
 varying vec3 vNormal;
     
@@ -15,5 +15,9 @@ void main() {
         vec3 R = reflect(I,normals);
         vec3 direction = mat3(uInversedRotationMatrix) * R;
         gl_FragColor = textureCube(uSampler, -direction.xzy);
-    } else gl_FragColor = vColor;
+    }
+    else {
+        vec3 col = vColor * dot(vNormal,normalize(vec3(-vPosition))); // Lambert rendering, eye light source
+        gl_FragColor = vec4(col,1.0);
+    }
 }
