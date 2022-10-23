@@ -12,7 +12,6 @@
 	<script type="text/javascript" src="glCourseBasis.js"></script>
 	<script type="text/javascript" src="objLoader.js"></script>
 	<script type="text/javascript" src="style/style.js"></script>
-
 </head>
 
 
@@ -41,6 +40,9 @@
 					<li><button type="button" onclick="if (OBJ1 !== PORSCHE) OBJ1 = PORSCHE;">Porsche</button></li>
 					<li><button type="button" onclick="if (OBJ1 !== SPHERE) OBJ1 = SPHERE;">Sphere</button></li>
 				</ul>
+				<br><br>
+				<label for="modelColor">Color</label>
+				<input type="color" id="modelColor" name="modelColor" onchange="MODEL_COLOR = hexToRgb(this.value); console.log(MODEL_COLOR);">
 			</div>
 
 			<div id="cube" class="tabcontent">
