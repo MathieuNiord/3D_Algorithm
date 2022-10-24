@@ -1,3 +1,4 @@
+// Open a tab on click
 function openTab(evt, tabName) {
     // Declare all variables
     var i, tabcontent, tablinks;
@@ -17,4 +18,22 @@ function openTab(evt, tabName) {
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
-} 
+}
+
+// Switch the object to display
+function switchObject(Object) {
+    if (OBJ1 !== Object) OBJ1 = Object;
+}
+
+// Switch the scene (skybox)
+function switchScene(Name) {
+    if (SKYBOX_SCENE !== Name) {
+        SKYBOX_SCENE = Name;
+        delete SKYBOX;
+        SKYBOX = new cubemaps();
+    }
+}
+
+function initAll() {
+    document.getElementById("defaultOpen").click();
+}

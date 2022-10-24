@@ -15,7 +15,7 @@
 </head>
 
 
-<body onload="webGLStart();">
+<body onload="webGLStart(); initAll();">
 
 	<div id="wrapper">
 
@@ -27,56 +27,43 @@
 		<!-- Configuration on the right side -->
 		<div id="config">
 			<div class="tab">
-				<button class="tablinks" onclick="openTab(event, 'models')">3D Models</button>
-				<button class="tablinks" onclick="openTab(event, 'cube')">Cube</button>
-				<button class="tablinks" onclick="openTab(event, 'configuration')">Configuration</button>
+				<button class="tablinks" id="defaultOpen" onclick="openTab(event, 'models');">3D Models</button>
+				<button class="tablinks" onclick="openTab(event, 'cube');">Cube</button>
+				<button class="tablinks" onclick="openTab(event, 'skybox');">Skybox</button>
 			</div>
 
 			<div id="models" class="tabcontent">
-				<br><br>
 				<ul>
-					<li><button type="button" onclick="if (OBJ1 !== BUNNY) OBJ1 = BUNNY;">Bunny</button></li>
-					<li><button type="button" onclick="if (OBJ1 !== MUSTANG) OBJ1 = MUSTANG;">Mustang</button></li>
-					<li><button type="button" onclick="if (OBJ1 !== PORSCHE) OBJ1 = PORSCHE;">Porsche</button></li>
-					<li><button type="button" onclick="if (OBJ1 !== SPHERE) OBJ1 = SPHERE;">Sphere</button></li>
+					<li><button type="button" class="button_model" onclick="switchObject(BUNNY);">Bunny</button></li>
+					<li><button type="button" class="button_model" onclick="switchObject(MUSTANG);">Mustang</button></li>
+					<li><button type="button" class="button_model" onclick="switchObject(PORSCHE);">Porsche</button></li>
+					<li><button type="button" class="button_model" onclick="switchObject(SPHERE);">Sphere</button></li>
 				</ul>
-				<br><br>
 				<label for="modelColor">Color</label>
 				<input type="color" id="modelColor" name="modelColor" onchange="MODEL_COLOR = hexToRgb(this.value); console.log(MODEL_COLOR);">
 			</div>
 
 			<div id="cube" class="tabcontent">
 				<br><br>
-				<ul>
-					<li><button type="button" onclick="if (OBJ1 !== CUBE) OBJ1 = CUBE;">Cube</button></li>
-					<li>
-						<input type="checkbox" name="mirror" onclick="isMirroring = !isMirroring;">
-						<label for="mirror">Mirror Texture</label>
-					</li>
-				</ul>
+				<button type="button" class="button_model" onclick="switchObject(CUBE);">Cube</button>
+				<input type="checkbox" name="mirror" onclick="isMirroring = !isMirroring;">
+				<label for="mirror">Mirror Texture</label>
 			</div>
 
-			<div id="configuration" class="tabcontent">
-				<br><br>
+			<div id="skybox" class="tabcontent">
 				<ul>
 					<li>
-						<input type="checkbox" name="Plane" onclick="isTherePlane=!isTherePlane;">
-						<label for="Plane">Plane</label>
+						<input type="checkbox" name="plane_switch" onclick="isTherePlane=!isTherePlane;">
+						<label for="plane_switch">Plane</label>
 					</li>
 					<li>
-						<input type="checkbox" onclick="isThereSkybox=!isThereSkybox;" checked>
-						<label for="Skybox">Skybox</label>
-						<select name="scene" onchange="
-							let selected = this.value;
-							if (SKYBOX_SCENE !== selected) {
-								SKYBOX_SCENE = selected;
-								delete SKYBOX;
-								SKYBOX = new cubemaps();
-							}
-						">
-							<option value="ocean" selected>Ocean</option>
-							<option value="museum">Museum</option>
-						</select>
+						<input type="checkbox" name="skybox_switch" onclick="isThereSkybox=!isThereSkybox;" checked>
+						<label for="skybox_switch">Skybox</label>
+					</li>
+					<li>
+						<h3>Gallery</h3>
+						<input type="image" src="res/textures/skybox/ocean/pos-z.jpg" onclick="switchScene('ocean');" width="128" height="128"/>
+						<input type="image" src="res/textures/skybox/museum/pos-z.jpg" onclick="switchScene('museum');" width="128" height="128"/>
 					</li>
 				</ul>
 			</div>
