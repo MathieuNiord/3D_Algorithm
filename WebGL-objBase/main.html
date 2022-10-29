@@ -27,18 +27,21 @@
 		<!-- Configuration on the right side -->
 		<div id="config">
 			<div class="tab">
-				<button class="tablinks" id="defaultOpen" onclick="openTab(event, 'models');">3D Models</button>
+				<button class="tablinks" id="defaultOpen" onclick="openTab(event, 'model_config');">3D Models</button>
 				<button class="tablinks" onclick="openTab(event, 'cube');">Cube</button>
 				<button class="tablinks" onclick="openTab(event, 'skybox');">Skybox</button>
 			</div>
 
-			<div id="models" class="tabcontent">
-				<ul>
+			<div id="model_config" class="tabcontent">
+				<h3>3D Models</h3>
+				<ul id="model_buttons_list">
 					<li><button type="button" class="button_model" onclick="switchObject(BUNNY);">Bunny</button></li>
 					<li><button type="button" class="button_model" onclick="switchObject(MUSTANG);">Mustang</button></li>
 					<li><button type="button" class="button_model" onclick="switchObject(PORSCHE);">Porsche</button></li>
 					<li><button type="button" class="button_model" onclick="switchObject(SPHERE);">Sphere</button></li>
+					<li><button type="button" class="button_model" onclick="switchObject(CUBE);">Cube</button></li>
 				</ul>
+				<h3>Parameters</h3>
 				<label for="modelColor">Color</label>
 				<input type="color" id="modelColor" name="modelColor" onchange="MODEL_COLOR = hexToRgb(this.value); console.log(MODEL_COLOR);">
 			</div>

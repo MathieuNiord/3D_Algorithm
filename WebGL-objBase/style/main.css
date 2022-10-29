@@ -39,12 +39,14 @@ body {
 
 /* Change background color of buttons on hover */
 .tab button:hover {
-    background-color: #ddd;
+    background-color: rgb(99, 99, 220);
+    color: white;
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
-    background-color: #ccc;
+    background-color: rgb(64, 89, 201);
+    color: white;
 }
 
 /* Style the tab content */
@@ -86,7 +88,7 @@ body {
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    width: 15%;
+    width: 100pt;
 }
 
 .button_model:disabled {
@@ -95,4 +97,13 @@ body {
 
 .button_model:focus {
   box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset, rgba(50, 50, 93, .2) 0 6px 15px 0, rgba(0, 0, 0, .1) 0 2px 2px 0, rgba(50, 151, 211, .3) 0 0 0 4px;
+}
+
+#model_buttons_list {
+    /*Horizontal display*/
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-content: center;
 }
