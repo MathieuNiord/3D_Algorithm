@@ -1,5 +1,6 @@
 body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: #1d1e22;
 }
 
 /* Positionning divs */
@@ -14,54 +15,96 @@ body {
     float: left;
 }
 
-#config {
-    width: 50%;
-    float: left;
-}​
-
 /* Style the tab */
-.tab {
+.tabpane {
+    width: 50%;
+	margin: 0;
+    float: right;
+}
+
+.tabs {
+    display: table;
+    table-layout: fixed;
+    width: 75%;
+    -webkit-transform: translateY(5px);
+    transform: translateY(5px);
+}
+
+.tabs > li {
+    transition-duration: 0.25s;
+    display: table-cell;
+    list-style: none;
+    text-align: center;
+    padding: 20px 20px 25px 20px;
+    position: relative;
     overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
-}
-
-/* Style the buttons that are used to open the tab content */
-.tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
     cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
-}
-
-/* Change background color of buttons on hover */
-.tab button:hover {
-    background-color: rgb(99, 99, 220);
     color: white;
 }
 
-/* Create an active/current tablink class */
-.tab button.active {
-    background-color: rgb(64, 89, 201);
-    color: white;
+.tabs > li:before {
+    z-index: -1;
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 120%;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+    transition-duration: 0.25s;
+    border-radius: 5px 5px 0 0;
 }
 
-/* Style the tab content */
-.tabcontent {
+.tabs > li:hover:before {
+    -webkit-transform: translateY(70%);
+    transform: translateY(70%);
+}
+
+.tabs > li.active {
+    color: #50555a;
+}
+
+.tabs > li.active:before {
+    transition-duration: 0.5s;
+    background-color: white;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+}
+
+.tab__content {
+    background-color: white;
+    position: relative;
+    width: 100%;
+    border-radius: 5px;
+    align-content: center;
+    margin: 0 0 0 30pt;
+}
+
+.tab__content > li {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
     display: none;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-top: none;
-} 
-
-.tabcontent ul {
-    margin-top: 50px;
-    list-style-type: none;
+    list-style: none;
 }
 
+.tab__content > li .content__wrapper {
+    border-radius: 5px;
+    width: 75%;
+    padding: 45px 40px 40px 40px;
+    background-color: white;
+}
+
+.content__wrapper h3 {
+    width: 100%;
+    padding-bottom: 20px;
+    font-weight: 300;
+}
+
+/* Style buttons */
 .button_model {
     appearance: button;
     backface-visibility: hidden;
@@ -100,10 +143,16 @@ body {
 }
 
 #model_buttons_list {
-    /*Horizontal display*/
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-around;
     align-content: center;
+}
+
+footer {
+    padding: 40px 0;
+    text-align: center;
+    opacity: 0.33;
+    color: white;
 }

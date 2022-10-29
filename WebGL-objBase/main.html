@@ -15,7 +15,7 @@
 </head>
 
 
-<body onload="webGLStart(); initAll();">
+<body onload="webGLStart(); initVars();">
 
 	<div id="wrapper">
 
@@ -25,56 +25,73 @@
 		</div>
 		
 		<!-- Configuration on the right side -->
-		<div id="config">
-			<div class="tab">
-				<button class="tablinks" id="defaultOpen" onclick="openTab(event, 'model_config');">3D Models</button>
-				<button class="tablinks" onclick="openTab(event, 'cube');">Cube</button>
-				<button class="tablinks" onclick="openTab(event, 'skybox');">Skybox</button>
-			</div>
+		<section class="tabpane">
 
-			<div id="model_config" class="tabcontent">
-				<h3>3D Models</h3>
-				<ul id="model_buttons_list">
-					<li><button type="button" class="button_model" onclick="switchObject(BUNNY);">Bunny</button></li>
-					<li><button type="button" class="button_model" onclick="switchObject(MUSTANG);">Mustang</button></li>
-					<li><button type="button" class="button_model" onclick="switchObject(PORSCHE);">Porsche</button></li>
-					<li><button type="button" class="button_model" onclick="switchObject(SPHERE);">Sphere</button></li>
-					<li><button type="button" class="button_model" onclick="switchObject(CUBE);">Cube</button></li>
-				</ul>
-				<h3>Parameters</h3>
-				<label for="modelColor">Color</label>
-				<input type="color" id="modelColor" name="modelColor" onchange="MODEL_COLOR = hexToRgb(this.value); console.log(MODEL_COLOR);">
-			</div>
+			<!-- Tab links -->
+			<ul class="tabs">
+				<li class="tab_link active" onclick="openTab(event, 'model_config');">3D Models</li>
+				<li class="tab_link" onclick="openTab(event, 'cube');">Cube</li>
+				<li class="tab_link" onclick="openTab(event, 'skybox');">Skybox</li>
+			</ul>
 
-			<div id="cube" class="tabcontent">
-				<br><br>
-				<button type="button" class="button_model" onclick="switchObject(CUBE);">Cube</button>
-				<input type="checkbox" name="mirror" onclick="isMirroring = !isMirroring;">
-				<label for="mirror">Mirror Texture</label>
-			</div>
+			<!-- Tab contents -->
+			<ul class="tab__content">
 
-			<div id="skybox" class="tabcontent">
-				<ul>
-					<li>
-						<input type="checkbox" name="plane_switch" onclick="isTherePlane=!isTherePlane;">
-						<label for="plane_switch">Plane</label>
-					</li>
-					<li>
-						<input type="checkbox" name="skybox_switch" onclick="isThereSkybox=!isThereSkybox;" checked>
-						<label for="skybox_switch">Skybox</label>
-					</li>
-					<li>
-						<h3>Gallery</h3>
-						<input type="image" src="res/textures/skybox/ocean/pos-z.jpg" onclick="switchScene('ocean');" width="128" height="128"/>
-						<input type="image" src="res/textures/skybox/museum/pos-z.jpg" onclick="switchScene('museum');" width="128" height="128"/>
-					</li>
-				</ul>
-			</div>
-		</div>
+				<li id="model_config" class="tab active">
+					<div class="content__wrapper">
+						<h3>3D Models</h3>
+						<ul id="model_buttons_list">
+							<li><button type="button" class="button_model" onclick="switchObject(BUNNY);">Bunny</button></li>
+							<li><button type="button" class="button_model" onclick="switchObject(MUSTANG);">Mustang</button></li>
+							<li><button type="button" class="button_model" onclick="switchObject(PORSCHE);">Porsche</button></li>
+							<li><button type="button" class="button_model" onclick="switchObject(SPHERE);">Sphere</button></li>
+							<li><button type="button" class="button_model" onclick="switchObject(CUBE);">Cube</button></li>
+						</ul>
+						<h3>Parameters</h3>
+						<label for="modelColor">Color</label>
+						<input type="color" id="modelColor" name="modelColor" onchange="MODEL_COLOR = hexToRgb(this.value); console.log(MODEL_COLOR);">
+						<input type="checkbox" name="mirror" onclick="isMirroring = !isMirroring;">
+						<label for="mirror">Mirror Texture</label>
+					</div>
+				</li>
+
+				<li id="cube" class="tab">
+					<div class="content__wrapper">
+						<br><br>
+						<button type="button" class="button_model" onclick="switchObject(CUBE);">Cube</button>
+						<input type="checkbox" name="mirror" onclick="isMirroring = !isMirroring;">
+						<label for="mirror">Mirror Texture</label>
+					</div>
+				</li>
+
+				<li id="skybox" class="tab">
+					<div class="content__wrapper">
+						<ul>
+							<li>
+								<input type="checkbox" name="plane_switch" onclick="isTherePlane=!isTherePlane;">
+								<label for="plane_switch">Plane</label>
+							</li>
+							<li>
+								<input type="checkbox" name="skybox_switch" onclick="isThereSkybox=!isThereSkybox;" checked>
+								<label for="skybox_switch">Skybox</label>
+							</li>
+							<li>
+								<h3>Gallery</h3>
+								<input type="image" src="res/textures/skybox/ocean/pos-z.jpg" onclick="switchScene('ocean');" width="128" height="128"/>
+								<input type="image" src="res/textures/skybox/museum/pos-z.jpg" onclick="switchScene('museum');" width="128" height="128"/>
+							</li>
+						</ul>
+					</div>
+				</li>
+
+			</ul>
+
+		</section>
 
 	</div>
 
-	<br><br>
+	<footer>By Gaetan Frejoux & Niord Mathieu</footer>
+
 </body>
 
 

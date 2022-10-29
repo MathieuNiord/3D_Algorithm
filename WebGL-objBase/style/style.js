@@ -1,23 +1,25 @@
-// Open a tab on click
+var tabWrapper, clickedTab, activeTab;
+
+function initVars() {
+    tabWrapper = document.getElementsByClassName("tabpane").item(0);
+    clickedTab = document.getElementsByClassName("tab_link active").item(0);
+    activeTab = document.getElementsByClassName("tab active").item(0);
+    activeTab.style.display = "block";
+}
+
 function openTab(evt, tabName) {
-    // Declare all variables
-    var i, tabcontent, tablinks;
 
-    // Get all elements with class="tabcontent" and hide them
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
+    activeTab.style.display = "none"; // Hide the previous active tab
+    activeTab = document.getElementById(tabName); // Set the new active tab
+    activeTab.className = activeTab.className.replace(" active", ""); // Remove the class "active" from the previous active tab
+    clickedTab.className = clickedTab.className.replace(" active", ""); // Remove the class "active" from the previous clicked tab
+    clickedTab = evt.currentTarget; // Update the clicked tab
 
-    // Get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
+    activeTab.style.display = "block"; // Show the new tab
 
-    // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
+    // Add an "active" class to the button that opened the tab and set the new clicked tab
+    activeTab.className += " active";
+    clickedTab.className += " active";
 }
 
 // Switch the object to display
@@ -32,8 +34,4 @@ function switchScene(Name) {
         delete SKYBOX;
         SKYBOX = new cubemaps();
     }
-}
-
-function initAll() {
-    document.getElementById("defaultOpen").click();
 }
