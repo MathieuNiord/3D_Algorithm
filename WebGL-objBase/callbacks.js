@@ -10,18 +10,16 @@ var rotY = 0;
 var rotX = -1;
 
 // =====================================================
-window.requestAnimFrame = (function()
-{
+window.requestAnimFrame = (function () {
 	return window.requestAnimationFrame ||
-         window.webkitRequestAnimationFrame ||
-         window.mozRequestAnimationFrame ||
-         window.oRequestAnimationFrame ||
-         window.msRequestAnimationFrame ||
-         function(/* function FrameRequestCallback */ callback,
-									/* DOMElement Element */ element)
-         {
-            window.setTimeout(callback, 1000/60);
-         };
+		window.webkitRequestAnimationFrame ||
+		window.mozRequestAnimationFrame ||
+		window.oRequestAnimationFrame ||
+		window.msRequestAnimationFrame ||
+		function (/* function FrameRequestCallback */ callback,
+									/* DOMElement Element */ element) {
+			window.setTimeout(callback, 1000 / 60);
+		};
 })();
 
 // ==========================================
@@ -39,7 +37,7 @@ function degToRad(degrees) {
 // =====================================================
 function handleMouseWheel(event) {
 
-	distCENTER[2] += event.deltaY/10.0;
+	distCENTER[2] += event.deltaY / 2000.0;
 }
 
 // =====================================================
@@ -58,16 +56,16 @@ function handleMouseUp(event) {
 
 // =====================================================
 function handleMouseMove(event) {
-	
+
 	if (!mouseDown) return;
 
 	var newX = event.clientX;
-	var newY = event.clientY;	
+	var newY = event.clientY;
 	var deltaX = newX - lastMouseX;
 	var deltaY = newY - lastMouseY;
-	
-	if(event.shiftKey) {
-		distCENTER[2] += deltaY/100.0;
+
+	if (event.shiftKey) {
+		distCENTER[2] += deltaY / 100.0;
 	} else {
 
 		rotY += degToRad(deltaX / 5);
@@ -77,7 +75,7 @@ function handleMouseMove(event) {
 		mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
 		mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
 	}
-	
+
 	lastMouseX = newX
 	lastMouseY = newY;
 }
