@@ -15,79 +15,94 @@
 </head>
 
 
-<body onload="webGLStart(); initVars();">
+<body onload="webGLStart();">
 
-	<div id="wrapper">
+	<!-- Canvas on the left side -->
+	<div id="canvas" align-items="center">
+		<canvas id="WebGL-test" style="border:none;" width="1280" height="720"></canvas>
+	</div>
+	
+	<!-- Configuration on the right side -->
+	<div class="menu">
+		<button class="open-button" onclick="openMenu(event)">Menu</button>
 
-		<!-- Canvas on the left side -->
-		<div id="canvas">
-			<canvas id="WebGL-test" style="border:none;" width="800" height="600"></canvas>
+		<div id="menu__content" class="menu__content">
+			
+			<button id="close" onclick="closeMenu()">Close</button>
+
+			<div class="dropdown">
+				<div class="header">
+					<span onclick="switchDropdown(event);">
+						<span>v</span>
+						Objects
+					</span>
+				</div>
+				<div class="content__wrapper">
+					<item>
+						<div class="row">
+							<label for="models_select">Objects</label>
+							<select id="models_select" name="Objects" class="selector">
+								<option value="0" onclick="switchObject(BUNNY);" selected>Bunny</option>
+								<option value="1" onclick="switchObject(MUSTANG);">Mustang</option>
+								<option value="2" onclick="switchObject(PORSCHE);">Porsche</option>
+								<option value="3" onclick="switchObject(SPHERE);">Sphere</option>
+								<option value="4" onclick="switchObject(CUBE);">Cube</option>
+							</select>
+						</div>
+					</item>
+					<item>
+						<div class="row">
+							<label for="color">Colors:</label>
+							<input type="color" id="color" class="color__picker" name="color" value="#000000" onchange="MODEL_COLOR = hexToRgb(this.value);">
+						</div>
+					</item>
+					<item>
+						<div class="row">
+							<label for="texture_select">Texture:</label>
+							<select id="texture_select" name="Textures" class="selector" onchange="showFresnel(this.value);">
+								<option value="0" onclick="isMirroring = isReflecting = false;" selected>None</option>
+								<option value="1" onclick="isMirroring = !isMirroring;">Mirror</option>
+								<option value="2" onclick="isReflecting = !isReflecting;">Reflects</option>
+							</select>
+						</div>
+					</item>
+					<item>
+						<div class="row" id="fresnel" style="display: none;">
+							<label for="fresnel_coeff">Fresnel:</label>
+							<input
+								type="range"
+								id="fresnel_coeff" name="fresnel_coeff"
+								min="0" max="1" step="0.01" value="0.0"
+								onchange="updateValue(event);" onmousemove="updateValue(event);"
+							>
+							<span id="fresnel_coeff_value">0</span>
+						</div>
+					</item>
+				</div>
+			</div>
+
+			<div class="dropdown">
+				<div class="header">
+					<span onclick="switchDropdown(event);">
+						<span>v</span>
+						Skybox
+					</span>
+					<input type="checkbox" id="scene" name="scene" onclick="isThereSkybox = this.checked;" checked>
+				</div>
+				<div class="content__wrapper">
+					<item>
+						<div class="row gallery">
+							<label for="gallery">Scenes:</label>
+							<div id="gallery" class="selector">
+								<img class="active" src="res\textures\skybox\ocean\pos-z.jpg" width="48px" height="48px" onclick="switchScene(event, 'ocean');"/>
+								<img src="res\textures\skybox\museum\pos-z.jpg" width="48px" height="48px" onclick="switchScene(event, 'museum');"/>
+							</select>
+							</div>
+						</div>
+					</item>
+				</div>
+			</div>
 		</div>
-		
-		<!-- Configuration on the right side -->
-		<section class="tabpane">
-
-			<!-- Tab links -->
-			<ul class="tabs">
-				<li class="tab_link active" onclick="openTab(event, 'model_config');">3D Models</li>
-				<li class="tab_link" onclick="openTab(event, 'cube');">Cube</li>
-				<li class="tab_link" onclick="openTab(event, 'skybox');">Skybox</li>
-			</ul>
-
-			<!-- Tab contents -->
-			<ul class="tab__content">
-
-				<li id="model_config" class="tab active">
-					<div class="content__wrapper">
-						<h3>3D Models</h3>
-						<ul id="model_buttons_list">
-							<li><button type="button" class="button_model" onclick="switchObject(BUNNY);">Bunny</button></li>
-							<li><button type="button" class="button_model" onclick="switchObject(MUSTANG);">Mustang</button></li>
-							<li><button type="button" class="button_model" onclick="switchObject(PORSCHE);">Porsche</button></li>
-							<li><button type="button" class="button_model" onclick="switchObject(SPHERE);">Sphere</button></li>
-							<li><button type="button" class="button_model" onclick="switchObject(CUBE);">Cube</button></li>
-						</ul>
-						<h3>Parameters</h3>
-						<label for="modelColor">Color</label>
-						<input type="color" id="modelColor" name="modelColor" onchange="MODEL_COLOR = hexToRgb(this.value); console.log(MODEL_COLOR);">
-						<input type="checkbox" name="mirror" onclick="isMirroring = !isMirroring;">
-						<label for="mirror">Mirror Texture</label>
-					</div>
-				</li>
-
-				<li id="cube" class="tab">
-					<div class="content__wrapper">
-						<br><br>
-						<button type="button" class="button_model" onclick="switchObject(CUBE);">Cube</button>
-						<input type="checkbox" name="mirror" onclick="isMirroring = !isMirroring;">
-						<label for="mirror">Mirror Texture</label>
-					</div>
-				</li>
-
-				<li id="skybox" class="tab">
-					<div class="content__wrapper">
-						<ul>
-							<li>
-								<input type="checkbox" name="plane_switch" onclick="isTherePlane=!isTherePlane;">
-								<label for="plane_switch">Plane</label>
-							</li>
-							<li>
-								<input type="checkbox" name="skybox_switch" onclick="isThereSkybox=!isThereSkybox;" checked>
-								<label for="skybox_switch">Skybox</label>
-							</li>
-							<li>
-								<h3>Gallery</h3>
-								<input type="image" src="res/textures/skybox/ocean/pos-z.jpg" onclick="switchScene('ocean');" width="128" height="128"/>
-								<input type="image" src="res/textures/skybox/museum/pos-z.jpg" onclick="switchScene('museum');" width="128" height="128"/>
-							</li>
-						</ul>
-					</div>
-				</li>
-
-			</ul>
-
-		</section>
-
 	</div>
 
 	<footer>By Gaetan Frejoux & Niord Mathieu</footer>

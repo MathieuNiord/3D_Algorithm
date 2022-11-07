@@ -1,158 +1,209 @@
+* {
+    font-family: sans-serif !important;
+}
+
 body {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
     background-color: #1d1e22;
 }
 
-/* Positionning divs */
-#wrapper {
+#canvas {
     width: 100%;
+    float: left;
+    z-index: 0;
+}
+
+#WebGL-test {
+    width: 100%;
+}
+
+.menu {
+    width: 250px;
+    position: absolute;
+    top: 2.5%;
+    right: 3%;
+    z-index: 1;
+}
+
+.open-button {
+    background-color: rgb(83, 83, 83);
+    color: white;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    left: 85%;
+    height: 25px;
+    width: 20%;
+}
+
+.menu__content {
+    background-color: #444444;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+    border-radius: 2%;
+    z-index: 1;
+    display: none;
+}
+
+.menu__content button {
+    background-color: rgba(83, 83, 83, 0);
+    color: white;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    left: 80%;
+    bottom: 10px;
+    height: 25px;
+}
+
+.menu__content button.active .dropdown {
+    background-color: rgb(83, 83, 83);
+    display: none;
+}
+
+.menu__content button:hover {
+    opacity: 0.8;
+}
+
+.dropdown {
+    background-color: #383838;
+    border-top: 1px solid #aeaeae;
+    width: 100%;
+    display: inline-block;
+    padding: 2% 0;
+}
+
+/* Style the dropdown header */
+.dropdown .header {
+    color: white;
+    padding: 7px 10px;
+    font-size: 20px;
+    display: flex;
+}
+
+.dropdown span {
+    text-align: left;
+    font-size: medium;
+    cursor: pointer;
+    padding-right: 5px;
+}
+
+/* Hide the dropdown content */
+.content__wrapper {
+    display: none;
+    padding: 0 10px;
+    z-index: 1;
+}
+
+/* Open the dropdown menu on active */
+.dropdown.active .content__wrapper {
+    display: block;
+}
+
+/* Style the dropdown content row */
+.row {
+    color: white;
+    height: 45px;
+    position: relative;
+    font-size: 14px;
+    width: 100%;
+}
+
+.row:hover {
+    background-color: rgb(105, 105, 105, 0.5);
+}
+
+/* Style the selection menus */
+.selector {
+    position: absolute;
+    right: 5%;
+    border: none;
+    border-radius: 0%;
+    color: white;
+    background-color: rgb(63, 63, 63);
+    height: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.color__picker {
+    position: absolute;
+    right: 5%;
+    height: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+label {
+    position: absolute;
+    left: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.gallery {
+    padding: 10px 0;
+}
+
+.gallery div {
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0);
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    scrollbar-width: none;  /* Firefox */
     overflow-x: auto;
     overflow-y: hidden;
+    white-space: nowrap;
+    padding-bottom: 2%;
 }
 
-#canvas {
-    width: 50%;
-    float: left;
+.gallery div img {
+    opacity: 0.5;
+    margin-right: 5%;
+    width: 48px;
+    height: 48px;
 }
 
-/* Style the tab */
-.tabpane {
-    width: 50%;
-	margin: 0;
-    float: right;
-}
-
-.tabs {
-    display: table;
-    table-layout: fixed;
-    width: 75%;
-    -webkit-transform: translateY(5px);
-    transform: translateY(5px);
-}
-
-.tabs > li {
-    transition-duration: 0.25s;
-    display: table-cell;
-    list-style: none;
-    text-align: center;
-    padding: 20px 20px 25px 20px;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    color: white;
-}
-
-.tabs > li:before {
-    z-index: -1;
-    position: absolute;
-    content: "";
-    width: 100%;
-    height: 120%;
-    top: 0;
-    left: 0;
-    background-color: rgba(255, 255, 255, 0.3);
-    -webkit-transform: translateY(100%);
-    transform: translateY(100%);
-    transition-duration: 0.25s;
-    border-radius: 5px 5px 0 0;
-}
-
-.tabs > li:hover:before {
-    -webkit-transform: translateY(70%);
-    transform: translateY(70%);
-}
-
-.tabs > li.active {
-    color: #50555a;
-}
-
-.tabs > li.active:before {
-    transition-duration: 0.5s;
-    background-color: white;
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-}
-
-.tab__content {
-    background-color: white;
-    position: relative;
-    width: 100%;
-    border-radius: 5px;
-    align-content: center;
-    margin: 0 0 0 30pt;
-}
-
-.tab__content > li {
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: none;
-    list-style: none;
-}
-
-.tab__content > li .content__wrapper {
-    border-radius: 5px;
-    width: 75%;
-    padding: 45px 40px 40px 40px;
-    background-color: white;
-}
-
-.content__wrapper h3 {
-    width: 100%;
-    padding-bottom: 20px;
-    font-weight: 300;
-}
-
-/* Style buttons */
-.button_model {
-    appearance: button;
-    backface-visibility: hidden;
-    background-color: #405cf5;
-    border-radius: 6px;
-    border-width: 0;
-    box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    font-family: -apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif;
-    font-size: 100%;
+.gallery div img.active {
+    opacity: 1;
+    border: 3px solid #a7a7a7;
+    width: 44px;
     height: 44px;
-    line-height: 1.15;
-    margin: 15px 0 0;
-    outline: none;
-    overflow: hidden;
-    padding: 0 25px;
-    position: relative;
-    text-align: center;
-    text-transform: none;
-    transform: translateZ(0);
-    transition: all .2s,box-shadow .08s ease-in;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    width: 100pt;
 }
 
-.button_model:disabled {
-  cursor: default;
+.gallery div img:hover{
+    opacity: 1;
 }
 
-.button_model:focus {
-  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset, rgba(50, 50, 93, .2) 0 6px 15px 0, rgba(0, 0, 0, .1) 0 2px 2px 0, rgba(50, 151, 211, .3) 0 0 0 4px;
+#fresnel_coeff {
+    position: absolute;
+    width: 50%;
+    right: 20%;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-#model_buttons_list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-content: center;
+#fresnel_coeff_value {
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #444444;
+    color: white;
+    border-radius: 2px;
+    width: 10%;
+    height: 35%;
+    font-size: 14px;
 }
 
 footer {
+    position: absolute;
+    bottom: 50px;
     padding: 40px 0;
     text-align: center;
     opacity: 0.33;
     color: white;
+    z-index: -1;
 }

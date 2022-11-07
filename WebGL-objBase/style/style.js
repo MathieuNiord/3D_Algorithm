@@ -1,35 +1,70 @@
-var tabWrapper, clickedTab, activeTab;
+function switchDropdown(evt) {
 
-function initVars() {
-    tabWrapper = document.getElementsByClassName("tabpane").item(0);
-    clickedTab = document.getElementsByClassName("tab_link active").item(0);
-    activeTab = document.getElementsByClassName("tab active").item(0);
-    activeTab.style.display = "block";
+    var span = evt.target;
+    var icon = span.querySelector('span');
+    var dropdown = span.closest('.dropdown');
+
+    if (dropdown.classList.contains('active')) {
+        dropdown.classList.remove('active');
+        // replace the text content of icon (<span>) with "⌄"
+        icon.textContent = 'v';
+    }
+    else {
+        dropdown.classList.add('active');
+        // replace the text content of icon (<span>) with "⌃"
+        icon.textContent = 'A';
+    }
 }
 
-function openTab(evt, tabName) {
+function updateValue(evt) {
+    var slider = evt.target;
+    var value = slider.value;
+    var output = document.getElementById('fresnel_coeff_value');
+    output.textContent = value;
+}
 
-    activeTab.style.display = "none"; // Hide the previous active tab
-    activeTab = document.getElementById(tabName); // Set the new active tab
-    activeTab.className = activeTab.className.replace(" active", ""); // Remove the class "active" from the previous active tab
-    clickedTab.className = clickedTab.className.replace(" active", ""); // Remove the class "active" from the previous clicked tab
-    clickedTab = evt.currentTarget; // Update the clicked tab
+function openMenu(evt) {
+    var btn = evt.target;
+    var menu = document.getElementById('menu__content');
+    btn.style.display = 'none';
+    menu.style.display = 'block';
+}
 
-    activeTab.style.display = "block"; // Show the new tab
+function closeMenu() {
+    var btn = document.getElementsByClassName('open-button')[0];
+    var menu = document.getElementById('menu__content');
+    btn.style.display = 'block';
+    menu.style.display = 'none';
+}
 
-    // Add an "active" class to the button that opened the tab and set the new clicked tab
-    activeTab.className += " active";
-    clickedTab.className += " active";
+function showFresnel(value) {
+    console.log(value);
+    var fresnel = document.getElementById('fresnel');
+    fresnel.style.display = (value == 2) ? 'block' : 'none';
 }
 
 // Switch the object to display
 function switchObject(Object) {
     if (OBJ1 !== Object) OBJ1 = Object;
+    console.log(Object);
 }
 
 // Switch the scene (skybox)
-function switchScene(Name) {
+function switchScene(evt, Name) {
+
     if (SKYBOX_SCENE !== Name) {
+        
+        // Deactive all images (remove the active class)
+        images = document.getElementById('gallery').querySelectorAll('img');
+        images.forEach(function (img) {
+            img.classList.remove('active');
+        });
+
+        // Active the current image (add the active class)
+        var img = evt.target;
+        img.classList.add('active');
+
+        // Change the skybox scene
         SKYBOX_SCENE = Name;
         delete SKYBOX;
         SKYBOX = new cubemaps();
