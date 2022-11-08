@@ -6,14 +6,10 @@ body {
     background-color: #1d1e22;
 }
 
-#canvas {
+#WebGL-test {
     width: 100%;
     float: left;
     z-index: 0;
-}
-
-#WebGL-test {
-    width: 100%;
 }
 
 .menu {
@@ -24,28 +20,28 @@ body {
     z-index: 1;
 }
 
-.open-button {
+#open-button {
     background-color: rgb(83, 83, 83);
     color: white;
     border: none;
     cursor: pointer;
     position: relative;
-    left: 85%;
+    left: 80%;
     height: 25px;
     width: 20%;
 }
 
-.menu__content {
+#menu__content {
     background-color: #444444;
     justify-content: center;
     align-items: center;
     padding-top: 20px;
-    border-radius: 2%;
     z-index: 1;
     display: none;
+    opacity: 0.7;
 }
 
-.menu__content button {
+#close {
     background-color: rgba(83, 83, 83, 0);
     color: white;
     border: none;
@@ -56,12 +52,12 @@ body {
     height: 25px;
 }
 
-.menu__content button.active .dropdown {
+#close.active .dropdown {
     background-color: rgb(83, 83, 83);
     display: none;
 }
 
-.menu__content button:hover {
+#close:hover {
     opacity: 0.8;
 }
 

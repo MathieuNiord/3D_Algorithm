@@ -1,3 +1,18 @@
+var doc = document;
+
+var openMenuBtn = doc.getElementById('open-button');
+var closeBtn = doc.getElementById('close-button');
+var dropdowns = doc.getElementsByClassName('dropdown');
+
+// Selectors / Mutators
+var selects = doc.getElementsByClassName('selector'); 
+var skyboxCheckBox = doc.getElementById('skybox_checkbox');
+var fresnelSlider = doc.getElementById('fresnel_coeff');
+var fresnelValue = doc.getElementById('fresnel_coeff_value');
+
+// Object loading
+var ObjectLoader = [ 'Bunny', 'Mustang', 'Porsche', 'Sphere', 'Cube' ];
+
 function switchDropdown(evt) {
 
     var span = evt.target;
@@ -16,11 +31,10 @@ function switchDropdown(evt) {
     }
 }
 
-function updateValue(evt) {
-    var slider = evt.target;
-    var value = slider.value;
-    var output = document.getElementById('fresnel_coeff_value');
-    output.textContent = value;
+function updateValue() {
+    let value = this.value;
+    fresnelValue.innerText = value;
+    FRESNEL_INDICE = value;
 }
 
 function openMenu(evt) {
@@ -31,22 +45,20 @@ function openMenu(evt) {
 }
 
 function closeMenu() {
-    var btn = document.getElementsByClassName('open-button')[0];
+    var btn = document.getElementById('open-button');
     var menu = document.getElementById('menu__content');
     btn.style.display = 'block';
     menu.style.display = 'none';
 }
 
-function showFresnel(value) {
-    console.log(value);
+function showFresnel() {
     var fresnel = document.getElementById('fresnel');
-    fresnel.style.display = (value == 2) ? 'block' : 'none';
+    fresnel.style.display = isReflecting ? 'block' : 'none';
 }
 
 // Switch the object to display
 function switchObject(Object) {
     if (OBJ1 !== Object) OBJ1 = Object;
-    console.log(Object);
 }
 
 // Switch the scene (skybox)
@@ -69,4 +81,30 @@ function switchScene(evt, Name) {
         delete SKYBOX;
         SKYBOX = new cubemaps();
     }
+}
+
+function initUI() {
+    
+    // Add options for model selection
+    ObjectLoader.forEach(function (ObjName) {
+        var option = doc.createElement('option');
+        option.value = ObjName;
+        option.textContent = ObjName;
+        option.setAttribute('onclick', 'switchObject(' + ObjName.toUpperCase() + ');');
+        selects[0].appendChild(option);
+    });
+
+    // Reset select menus
+    for (var i = 0; i < selects.length; i++) {
+        selects[i].selectedIndex = 0;
+    }
+
+    // Reset checkboxes (set to isThereSkybox)
+    console.log(isThereSkybox);
+    skyboxCheckBox.checked = isThereSkybox;
+
+    // Reset slider
+    fresnelSlider.value = FRESNEL_INDICE;
+    fresnelValue.innerText = FRESNEL_INDICE;
+    fresnelSlider.addEventListener('input', updateValue);
 }
