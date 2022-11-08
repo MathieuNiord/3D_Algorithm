@@ -6,7 +6,7 @@ varying vec3 N;
 uniform samplerCube uSampler;
 uniform mat4 uRotationMatrix;
 uniform bool uIsMirroring;
-uniform bool uIsReflecting;
+uniform bool uIsTransmitting;
 uniform float uFresnelIndice;
 
 uniform vec3 uColor;
@@ -19,11 +19,7 @@ void main(void)
 	vec3 reflectDirection = mat3(uRotationMatrix) * reflect(-I,normals);
 	vec3 transmissionDirection = mat3(uRotationMatrix) * refract(-I, normals, 1.0 / uFresnelIndice);
 
-	if (uIsMirroring) {
-        gl_FragColor = textureCube(uSampler, -reflectDirection.xzy);
-	}
-
-	else if (uIsReflecting) {
+	if (uIsMirroring && uIsTransmitting) {
 		float c = dot(I, normals);
         float g = sqrt((uFresnelIndice * uFresnelIndice) + (c * c) - 1.0);
         float left = 0.5 * (((g - c) * (g - c)) / ((g + c) * (g + c)));
@@ -34,9 +30,14 @@ void main(void)
 		vec4 colorReflection = vec4(textureCube(uSampler, reflectDirection.xzy).xyz * reflection, 1.0);
 		vec4 colorTransmission = vec4(textureCube(uSampler, transmissionDirection.xzy).xyz * transmission, 1.0);
 
-		gl_FragColor = colorTransmission + colorReflection;
+		gl_FragColor = colorTransmission + colorReflection;	
 	}
-
+	else if (uIsMirroring) {
+        gl_FragColor = textureCube(uSampler, reflectDirection.xzy);
+	}
+	else if (uIsTransmitting) {
+		gl_FragColor = textureCube(uSampler, transmissionDirection.xzy);
+	}
 	else {
 		vec3 col = vec3(uColor.xyz) * dot(N,normalize(vec3(-pos3D))); // Lambert rendering, eye light source
 		gl_FragColor = vec4(col,1.0);

@@ -53,9 +53,10 @@
 						<div class="row">
 							<label for="texture_select">Texture:</label>
 							<select id="texture_select" name="Textures" class="selector" onclick="showFresnel();">
-								<option value="0" onclick="isMirroring = isReflecting = false;" selected>None</option>
-								<option onclick="isMirroring = true; isReflecting = false;">Mirror</option>
-								<option onclick="isReflecting = true; isMirroring = false;">Reflects</option>
+								<option value="0" onclick="isMirroring = isTransmitting = false;" selected>None</option>
+								<option onclick="isMirroring = true; isTransmitting = false;">Mirror</option>
+								<option onclick="isTransmitting = true; isMirroring = false;">Reflects</option>
+								<option onclick="isMirroring = isTransmitting = true;">Mirror & Reflects</option>
 							</select>
 						</div>
 					</item>

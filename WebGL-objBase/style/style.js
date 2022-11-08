@@ -53,7 +53,7 @@ function closeMenu() {
 
 function showFresnel() {
     var fresnel = document.getElementById('fresnel');
-    fresnel.style.display = isReflecting ? 'block' : 'none';
+    fresnel.style.display = isTransmitting ? 'block' : 'none';
 }
 
 // Switch the object to display

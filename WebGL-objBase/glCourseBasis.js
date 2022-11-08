@@ -59,7 +59,7 @@ let preLoadingImages = new Promise((resolve, reject) => {
 
 // =====================================================
 var isMirroring = false;
-var isReflecting = false;
+var isTransmitting = false;
 
 const FRESNEL_INDICES = {
 	"AIR": 1.0,
@@ -117,12 +117,12 @@ class objmesh {
 		// Settting mirroring
 		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
 		this.shader.uMirrorUniform = gl.getUniformLocation(this.shader, "uIsMirroring");
-		this.shader.uReflectUniform = gl.getUniformLocation(this.shader, "uIsReflecting");
+		this.shader.uTransmitUniform = gl.getUniformLocation(this.shader, "uIsTransmitting");
 		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
 		gl.uniform1i(this.shader.uMirrorUniform, isMirroring);
-		gl.uniform1i(this.shader.uReflectUniform, isReflecting);
+		gl.uniform1i(this.shader.uTransmitUniform, isTransmitting);
 		gl.uniform1f(this.shader.uFresnelIndiceUniform, FRESNEL_INDICE);
 	}
 	
@@ -396,12 +396,12 @@ class cube {
 		// Settting mirroring
 		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
 		this.shader.uMirrorUniform = gl.getUniformLocation(this.shader, "uIsMirroring");
-		this.shader.uReflectUniform = gl.getUniformLocation(this.shader, "uIsReflecting");
+		this.shader.uTransmitUniform = gl.getUniformLocation(this.shader, "uIsTransmitting");
 		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
 		gl.uniform1i(this.shader.uMirrorUniform, isMirroring);
-		gl.uniform1i(this.shader.uReflectUniform, isReflecting);
+		gl.uniform1i(this.shader.uTransmitUniform, isTransmitting);
 		gl.uniform1f(this.shader.uFresnelIndiceUniform, FRESNEL_INDICE);
 	}
 
