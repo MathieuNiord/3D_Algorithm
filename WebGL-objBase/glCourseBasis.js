@@ -70,7 +70,7 @@ const FRESNEL_INDICES = {
 	"WATER": 1.33,
 	"STEEL": 2.0,
 }
-var FRESNEL_INDICE = 1.33;
+var FRESNEL_INDICE = 1.0;
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -131,10 +131,12 @@ class objmesh {
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, distCENTER);
 		mat4.multiply(mvMatrix, rotMatrix);
+
 		gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.uRotationMatrixUniform, false, mat4.inverse(rotMatrix));
+		
 		mat4.inverse(rotMatrix);
 	}
 	
@@ -411,7 +413,9 @@ class cube {
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.uRMatrixUniform, false, rotMatrix);
-		gl.uniformMatrix4fv(this.shader.uRotationMatrixUniform, false, rotMatrix);
+		gl.uniformMatrix4fv(this.shader.uRotationMatrixUniform, false, mat4.inverse(rotMatrix));
+
+		mat4.inverse(rotMatrix);
 	}
 
 	draw() {
@@ -725,15 +729,4 @@ function drawScene() {
 	if (OBJ1) OBJ1.draw();
 	if (isTherePlane) PLANE.draw();
 	if (isThereSkybox) SKYBOX.draw();
-}
-
-// Debugging
-function showImages() {
-	Object.keys(IMAGES).forEach(function(key) {
-		IMAGES[key].forEach(function(image) {
-			var img = document.createElement("img");
-			img.src = image.src;
-			document.body.appendChild(img);
-		});
-	});
 }

@@ -22,6 +22,7 @@ void main(void)
 	if (uIsMirroring) {
         gl_FragColor = textureCube(uSampler, -reflectDirection.xzy);
 	}
+
 	else if (uIsReflecting) {
 		float c = dot(I, normals);
         float g = sqrt((uFresnelIndice * uFresnelIndice) + (c * c) - 1.0);
@@ -35,6 +36,7 @@ void main(void)
 
 		gl_FragColor = colorTransmission + colorReflection;
 	}
+
 	else {
 		vec3 col = vec3(uColor.xyz) * dot(N,normalize(vec3(-pos3D))); // Lambert rendering, eye light source
 		gl_FragColor = vec4(col,1.0);
