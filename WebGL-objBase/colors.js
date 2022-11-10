@@ -28,4 +28,17 @@ function hexToRgb(hex) {
       parseInt(result[2], 16)/255.0,
       parseInt(result[3], 16)/255.0
      ] : [0.8, 0.4, 0.4];
-  }
+}
+
+function componentToHex(c) {
+    let hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(colorArray) {
+    return "#"
+            + componentToHex(colorArray[0] * 250)
+            + componentToHex(colorArray[1] * 250)
+            + componentToHex(colorArray[2] * 250)
+    ;
+}

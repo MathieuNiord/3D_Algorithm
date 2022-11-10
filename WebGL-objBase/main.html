@@ -17,7 +17,7 @@
 
 <body onload="webGLStart(); initUI();">
 
-	<canvas id="WebGL-test" style="border:none;" width="1280" height="720"></canvas>
+	<canvas id="WebGL-test" style="border:none;" width="2180" height="720"></canvas>
 	
 	<!-- Configuration on the right side -->
 	<div class="menu">
@@ -28,13 +28,17 @@
 			<button id="close" onclick="closeMenu()">Close</button>
 
 			<div class="dropdown">
-				<div class="header">
-					<span onclick="switchDropdown(event);">
-						<span>v</span>
-						Objects
-					</span>
+				<div class="header" onclick="toggleDropdown(event);">
+					<span class="caret down"></span>
+					Objects
 				</div>
 				<div class="content__wrapper">
+					<item>
+						<div class="row">
+							<label for="plane_checkbox">Plane</label>
+							<input type="checkbox" id="plane_checkbox" onclick="isTherePlane = this.checked">
+						</div>
+					</item>
 					<item>
 						<div class="row">
 							<label for="models_select">Objects</label>
@@ -46,22 +50,23 @@
 					<item>
 						<div class="row">
 							<label for="color">Colors:</label>
-							<input type="color" id="color" class="color__picker" name="color" value="#000000" onchange="MODEL_COLOR = hexToRgb(this.value);">
+							<input type="color" id="color_picker" name="color" value="#000000" onchange="MODEL_COLOR = hexToRgb(this.value);">
 						</div>
 					</item>
 					<item>
 						<div class="row">
 							<label for="texture_select">Texture:</label>
 							<select id="texture_select" name="Textures" class="selector" onclick="showFresnel();">
-								<option value="0" onclick="isMirroring = isReflecting = false;" selected>None</option>
-								<option onclick="isMirroring = true; isReflecting = false;">Mirror</option>
-								<option onclick="isReflecting = true; isMirroring = false;">Reflects</option>
+								<option value="0" onclick="isMirroring = isTransmitting = false;" selected>None</option>
+								<option onclick="isMirroring = true; isTransmitting = false;">Perfect Mirror</option>
+								<option onclick="isTransmitting = true; isMirroring = false;">Transmission</option>
+								<option onclick="isTransmitting = true; isMirroring = true;">M + T</option>
 							</select>
 						</div>
 					</item>
 					<item>
 						<div class="row" id="fresnel" style="display: none;">
-							<label for="fresnel_coeff">Fresnel:</label>
+							<label for="fresnel_coeff">nI:</label>
 							<input
 								type="range"
 								id="fresnel_coeff" name="fresnel_coeff"
@@ -74,22 +79,16 @@
 			</div>
 
 			<div class="dropdown">
-				<div class="header">
-					<span onclick="switchDropdown(event);">
-						<span>v</span>
-						Skybox
-					</span>
+				<div class="header" onclick="toggleDropdown(event);">
+					<span class="caret down"></span>
+					 Skybox
 					<input type="checkbox" id="skybox_checkbox" name="scene" onclick="isThereSkybox = this.checked;">
 				</div>
 				<div class="content__wrapper">
 					<item>
 						<div class="row gallery">
 							<label for="gallery">Scenes:</label>
-							<div id="gallery" class="selector">
-								<img class="active" src="res\textures\skybox\ocean\pos-z.jpg" width="48px" height="48px" onclick="switchScene(event, 'ocean');"/>
-								<img src="res\textures\skybox\museum\pos-z.jpg" width="48px" height="48px" onclick="switchScene(event, 'museum');"/>
-							</select>
-							</div>
+							<div id="gallery" class="selector"></div>
 						</div>
 					</item>
 				</div>
