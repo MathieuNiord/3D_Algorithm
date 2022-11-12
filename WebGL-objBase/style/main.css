@@ -2,66 +2,100 @@
     font-family: sans-serif !important;
 }
 
-body {
+html, body {
     background-color: #1d1e22;
+    height: 100%;
 }
 
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10%;
+    background: linear-gradient(180deg, #152e49 5%, #1d1e22 100%);
+}
+header img {
+    width: 3rem;
+    height: 3rem;
+    margin-right: 1rem;
+    border-radius: 50%;
+}
+
+.brand a {
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+#main_content {
+    position: relative;
+    padding: 1.1rem 5rem;
+    display: flex;
+    margin: 0 auto;
+    height: auto;
+    max-width: 1080px;
+    max-height: 720px;
+    z-index: 0;
+}
+
+/* Canvas style */
 #WebGL-test {
     width: 100%;
-    height: 100%;
+    height: auto;
+    top: 0;
+    left: 0;
     float: left;
     z-index: 0;
 }
 
+/* Menu global style */
 .menu {
-    width: 250px;
     position: absolute;
-    top: 2.5%;
-    right: 3%;
+    top: 2rem;
+    right: 6rem;
     z-index: 1;
 }
 
+/* "Open Menu" button */
 #open-button {
     background-color: rgb(83, 83, 83);
     color: white;
     border: none;
     cursor: pointer;
-    position: relative;
     left: 80%;
     height: 25px;
-    width: 20%;
+    width: 100%;
 }
 
+/* The menu when its opened */
 #menu__content {
     background-color: #44444498;
     justify-content: center;
     align-items: center;
     padding-top: 20px;
     z-index: 1;
-    display: none;
+    display: none; /* TODO: re-put none*/
     opacity: 0.8;
+    width: 250px;
 }
 
+/* "Close Menu" button */
 #close {
     background-color: rgba(83, 83, 83, 0);
     color: white;
     border: none;
     cursor: pointer;
     position: relative;
-    left: 80%;
-    bottom: 10px;
-    height: 25px;
+    left: 13rem;
+    bottom: 1rem;
+    height: 5%;
 }
-
-#close.active .dropdown {
-    background-color: rgb(83, 83, 83);
-    display: none;
-}
-
 #close:hover {
     opacity: 0.8;
 }
 
+/* Global dropdowns style */
 .dropdown {
     background-color: rgba(56, 56, 56, 0.08);
     border-top: 1px solid #aeaeae;
@@ -72,19 +106,20 @@ body {
     backdrop-filter: blur(6.3px);
     -webkit-backdrop-filter: blur(6.3px);
 }
-
-/* Style the dropdown header */
+/* Dropdown header style */
 .dropdown .header {
     color: white;
     padding: 7px 10px;
     font-size: 20px;
     display: flex;
     font-size: medium;
-    cursor: pointer;
+    cursor: default;
     padding-left: 5%;
     padding-right: 5%;
 }
 
+/* Personnal caret creation
+Used as indicator in headers when opening/closing dropdowns */
 .header .caret {
     position: relative;
     display: flex;
@@ -94,14 +129,14 @@ body {
     transform: translateY(-50%);
     margin-right: 5%;
 }
-  
+/* Dropdown is closed */
 .caret.down {
     content: '';
     border-top: 5px solid #f9f5f5;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
 }
-
+/* Dropdown is opened */
 .caret.up {
     content: '';
     top: 0;
@@ -110,19 +145,18 @@ body {
     border-right: 5px solid transparent;
 }
 
-/* Hide the dropdown content */
+/* Dropdown's content (contans rows) */
 .content__wrapper {
     display: none;
     padding: 0 10px;
     z-index: 1;
 }
-
-/* Open the dropdown menu on active */
+/* Display the content when a dropdown is active */
 .dropdown.active .content__wrapper {
     display: block;
 }
 
-/* Style the dropdown content row */
+/* Dropdown's row */
 .row {
     color: white;
     height: 45px;
@@ -130,7 +164,6 @@ body {
     font-size: 14px;
     width: 100%;
 }
-
 .row:hover {
     background-color: rgb(105, 105, 105, 0.5);
 }
@@ -148,6 +181,7 @@ body {
     transform: translateY(-50%);
 }
 
+/* The plane toggle */
 #plane_checkbox {
     position: relative;
     left: 85%;
@@ -155,6 +189,7 @@ body {
     transform: translateY(-50%);
 }
 
+/* The color picker that is used to change color of models */
 #color_picker {
     position: absolute;
     right: 5%;
@@ -170,10 +205,17 @@ label {
     transform: translateY(-50%);
 }
 
+/* The skybox toggle */
+#skybox_checkbox {
+    position: absolute;
+    top: 12.5px;
+    left: 85%;
+}
+
+/* Skybox textures gallery */
 .gallery {
     padding: 10px 0;
 }
-
 .gallery div {
     height: 50px;
     background-color: rgba(0, 0, 0, 0);
@@ -187,25 +229,24 @@ label {
     white-space: nowrap;
     padding-bottom: 2%;
 }
-
 .gallery div img {
     opacity: 0.5;
     margin-right: 5%;
     width: 48px;
     height: 48px;
+    cursor: pointer;
 }
-
 .gallery div img.active {
     opacity: 1;
     border: 3px solid #a7a7a7;
     width: 44px;
     height: 44px;
 }
-
 .gallery div img:hover{
     opacity: 1;
 }
 
+/* The fresnel nI coefficient slider */
 #fresnel_coeff {
     position: absolute;
     width: 50%;
@@ -213,7 +254,6 @@ label {
     top: 50%;
     transform: translateY(-50%);
 }
-
 #fresnel_coeff_value {
     position: absolute;
     right: 5%;
@@ -227,12 +267,12 @@ label {
     font-size: 14px;
 }
 
+/* Footer style */
 footer {
-    position: absolute;
-    bottom: 50px;
-    padding: 40px 0;
+    height: 10%;
+    padding: 5%;
     text-align: center;
     opacity: 0.33;
     color: white;
-    z-index: -1;
+    background: linear-gradient(180deg, #1d1e22 5%, #152e49 100%);
 }
