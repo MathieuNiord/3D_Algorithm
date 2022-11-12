@@ -121,8 +121,8 @@ class objmesh {
 		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
-		gl.uniform1i(this.shader.uMirrorUniform, isMirroring);
-		gl.uniform1i(this.shader.uTransmitUniform, isTransmitting);
+		gl.uniform1i(this.shader.uMirrorUniform, isMirroring && isThereSkybox);
+		gl.uniform1i(this.shader.uTransmitUniform, isTransmitting && isThereSkybox);
 		gl.uniform1f(this.shader.uFresnelIndiceUniform, FRESNEL_INDICE);
 	}
 	
@@ -400,8 +400,8 @@ class cube {
 		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
-		gl.uniform1i(this.shader.uMirrorUniform, isMirroring);
-		gl.uniform1i(this.shader.uTransmitUniform, isTransmitting);
+		gl.uniform1i(this.shader.uMirrorUniform, isMirroring && isThereSkybox);
+		gl.uniform1i(this.shader.uTransmitUniform, isTransmitting && isThereSkybox);
 		gl.uniform1f(this.shader.uFresnelIndiceUniform, FRESNEL_INDICE);
 	}
 
