@@ -14,7 +14,7 @@ var fresnelValue = doc.getElementById('fresnel_coeff_value');
 var gallery = doc.getElementById('gallery');
 
 // Object loading
-var ObjectLoader = [ 'Bunny', 'Mustang', 'Porsche', 'Sphere', 'Cube' ];
+var ObjectLoader = [ 'Bunny', 'Mustang', 'Porsche', 'Sphere' ];
 
 // Gallery of sykbox images loading
 var DEFAULT_COLOR = MODEL_COLOR;

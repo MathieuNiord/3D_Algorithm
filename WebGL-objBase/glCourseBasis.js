@@ -9,19 +9,11 @@ var distCENTER;
 
 // =====================================================
 var OBJ1 = null;	// The object that is rendered
-var BUNNY, MUSTANG, PORSCHE, SPHERE, CUBE, PLANE = null;
+var BUNNY, MUSTANG, PORSCHE, SPHERE, PLANE = null;
 var SKYBOX = null;
 
 // =====================================================
 var MODEL_COLOR = [0.8, 0.4, 0.4];
-var CUBE_FACE_COLORS = {
-	FRONT: 	Colors['white'],	// Front face: white
-	BACK:	Colors['red'],		// Back face: red
-	TOP:	Colors['green'],	// Top face: green
-	BOTTOM:	Colors['blue'],		// Bottom face: blue
-	RIGHT:	Colors['yellow'],	// Right face: yellow
-	LEFT:	Colors['purple']	// Left face: purple
-}
 
 // =====================================================
 var isTherePlane = false;
@@ -231,199 +223,6 @@ class plane {
 			
 			gl.drawArrays(gl.TRIANGLE_FAN, 0, this.vBuffer.numItems);
 			gl.drawArrays(gl.LINE_LOOP, 0, this.vBuffer.numItems);
-		}
-	}
-
-}
-
-
-// =====================================================
-// CUBE 3D, Figure géométrique
-// =====================================================
-
-class cube {
-
-	constructor() {
-		this.shaderName = 'geometry';
-		this.loaded=-1;
-		this.shader=null;
-		this.initAll();
-	}
-
-	initAll() {
-
-		var size = 0.5;
-
-		const vertices = [
-			// Front face
-			-size, -size,  size,
-			 size, -size,  size,
-			 size,  size,  size,
-			-size,  size,  size,
-			// Back face
-			-size, -size, -size,
-			-size,  size, -size,
-			 size,  size, -size,
-			 size, -size, -size,
-			// Top face
-			-size,  size, -size,
-			-size,  size,  size,
-			 size,  size,  size,
-			 size,  size, -size,
-			// Bottom face
-			-size, -size, -size,
-			 size, -size, -size,
-			 size, -size,  size,
-			-size, -size,  size,
-			// Right face
-			 size, -size, -size,
-			 size,  size, -size,
-			 size,  size,  size,
-			 size, -size,  size,
-			// Left face
-			-size, -size, -size,
-			-size, -size,  size,
-			-size,  size,  size,
-			-size,  size, -size
-		];
-
-		this.vBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-		this.vBuffer.itemSize = 3;
-		this.vBuffer.numItems = 24;
-
-		// Colors
-		var colors = [];
-
-		Object.keys(CUBE_FACE_COLORS).forEach(function (key) {
-			const c = CUBE_FACE_COLORS[key];
-			colors = colors.concat(c, c, c, c);
-		});
-			
-		this.cBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-		this.cBuffer.itemSize = 3;
-		this.cBuffer.numItems = 24;
-
-		// Mirror
-		const normals = [
-			// Front face
-			0.0, 0.0, 1.0,
-			0.0, 0.0, 1.0,
-			0.0, 0.0, 1.0,
-			0.0, 0.0, 1.0,
-			// Back face
-			0.0, 0.0, -1.0,
-			0.0, 0.0, -1.0,
-			0.0, 0.0, -1.0,
-			0.0, 0.0, -1.0,
-			// Top face
-			0.0, 1.0, 0.0,
-			0.0, 1.0, 0.0,
-			0.0, 1.0, 0.0,
-			0.0, 1.0, 0.0,
-			// Bottom face
-			0.0, -1.0, 0.0,
-			0.0, -1.0, 0.0,
-			0.0, -1.0, 0.0,
-			0.0, -1.0, 0.0,
-			// Right face
-			1.0, 0.0, 0.0,
-			1.0, 0.0, 0.0,
-			1.0, 0.0, 0.0,
-			1.0, 0.0, 0.0,
-			// Left face
-			-1.0, 0.0, 0.0,
-			-1.0, 0.0, 0.0,
-			-1.0, 0.0, 0.0,
-			-1.0, 0.0, 0.0
-		]
-
-		this.nBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.nBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
-		this.nBuffer.itemSize = 3;
-		this.nBuffer.numItems = 24;
-
-		const indices = [
-			0, 1, 2,      0, 2, 3,    // Front face
-			4, 5, 6,      4, 6, 7,    // Back face
-			8, 9, 10,     8, 10, 11,  // Top face
-			12, 13, 14,   12, 14, 15, // Bottom face
-			16, 17, 18,   16, 18, 19, // Right face
-			20, 21, 22,   20, 22, 23  // Left face
-		];
-
-		this.iBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-		this.iBuffer.itemSize = 1;
-		this.iBuffer.numItems = 36;
-
-		loadShaders(this);
-	}
-
-	setShadersParams() {
-
-		gl.useProgram(this.shader);
-
-		// Vertices
-		this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
-		gl.enableVertexAttribArray(this.shader.vAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.vertexAttribPointer(this.shader.vAttrib,this.vBuffer.itemSize, gl.FLOAT, false, 0, 0);
-		
-		// Colors
-		this.shader.cAttrib = gl.getAttribLocation(this.shader, "aVertexColor");
-		gl.enableVertexAttribArray(this.shader.cAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.cBuffer);
-		gl.vertexAttribPointer(this.shader.cAttrib,this.cBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		// Normals
-		this.shader.nAttrib = gl.getAttribLocation(this.shader, "aVertexNormal");
-		gl.enableVertexAttribArray(this.shader.nAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.nBuffer);
-		gl.vertexAttribPointer(this.shader.nAttrib,this.nBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		// Setting matrix
-		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
-		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
-		this.shader.uRMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
-		this.shader.uRotationMatrixUniform = gl.getUniformLocation(this.shader, "uRotationMatrix");
-
-		// Settting mirroring
-		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
-		this.shader.uMirrorUniform = gl.getUniformLocation(this.shader, "uIsMirroring");
-		this.shader.uTransmitUniform = gl.getUniformLocation(this.shader, "uIsTransmitting");
-		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
-
-		gl.uniform1i(this.shader.uSamplerUniform, 0);
-		gl.uniform1i(this.shader.uMirrorUniform, isMirroring && isThereSkybox);
-		gl.uniform1i(this.shader.uTransmitUniform, isTransmitting && isThereSkybox);
-		gl.uniform1f(this.shader.uFresnelIndiceUniform, FRESNEL_INDICE);
-	}
-
-	setMatrixUniforms() {
-		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, distCENTER);
-		mat4.multiply(mvMatrix, rotMatrix);
-		
-		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
-		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
-		gl.uniformMatrix4fv(this.shader.uRMatrixUniform, false, rotMatrix);
-		gl.uniformMatrix4fv(this.shader.uRotationMatrixUniform, false, mat4.inverse(rotMatrix));
-
-		mat4.inverse(rotMatrix);
-	}
-
-	draw() {
-		if(this.shader && this.loaded==4) {
-			this.setShadersParams();
-			this.setMatrixUniforms();
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer);
-			gl.drawElements(gl.TRIANGLES, this.iBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 		}
 	}
 
@@ -714,7 +513,6 @@ function webGLStart() {
 		MUSTANG = new objmesh("mustang.obj");
 		PORSCHE = new objmesh("porsche.obj");
 		SPHERE = new objmesh("sphere.obj");
-		CUBE = new cube();
 		// =======================
 			
 		tick();
