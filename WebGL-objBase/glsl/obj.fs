@@ -20,8 +20,10 @@ void main(void)
 	vec3 transmissionDirection = mat3(uRotationMatrix) * refract(-I, normals, 1.0 / uFresnelIndice);
 
 	if (uIsMirroring && uIsTransmitting) {
+		
 		float c = dot(I, normals);
         float g = sqrt((uFresnelIndice * uFresnelIndice) + (c * c) - 1.0);
+
         float left = 0.5 * (((g - c) * (g - c)) / ((g + c) * (g + c)));
         float right = 1.0 + (((c * (g + c) - 1.0) * (c * (g + c) - 1.0)) / ((c * (g - c) + 1.0) * (c * (g - c) + 1.0)));
 		
@@ -42,7 +44,7 @@ void main(void)
 		gl_FragColor = textureCube(uSampler, transmissionDirection.xzy);
 	}
 	else {
-		vec3 col = vec3(uColor.xyz) * dot(N,normalize(vec3(-pos3D))); // Lambert rendering, eye light source
+		vec3 col = vec3(uColor.xyz) * dot(N,normalize(vec3(-pos3D)));
 		gl_FragColor = vec4(col,1.0);
 	}
 }
