@@ -72,7 +72,7 @@ header img {
     align-items: center;
     padding-top: 20px;
     z-index: 1;
-    display: none; /* TODO: re-put none*/
+    display: none;
     opacity: 0.8;
     width: 250px;
 }
