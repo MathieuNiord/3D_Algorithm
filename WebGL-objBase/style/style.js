@@ -138,7 +138,6 @@ function initUI() {
 
     // Reset color picker to default value
     colorPicker.value = rgbToHex(DEFAULT_COLOR);
-
     // Reset select menus
     for (var i = 0; i < selects.length; i++) {
         selects[i].selectedIndex = 0;

@@ -14,20 +14,27 @@ uniform vec3 uColor;
 // ==============================================
 void main(void)
 {
-	vec3 normals = normalize(N);
-	vec3 I = normalize(-pos3D.xyz);
-	vec3 reflectDirection = mat3(uRotationMatrix) * reflect(-I,normals);
-	vec3 transmissionDirection = mat3(uRotationMatrix) * refract(-I, normals, 1.0 / uFresnelIndice);
 
-	if (uIsMirroring && uIsTransmitting) {
-		
-		float c = dot(I, normals);
+	normalize(N);
+	vec3 I = normalize(-pos3D.xyz);
+	
+	// Mirror + Transmission
+	if (uIsMirroring && uIsTransmitting) { 
+
+		vec3 reflectDirection = mat3(uRotationMatrix) * reflect(-I,N);
+		vec3 transmissionDirection = mat3(uRotationMatrix) * refract(-I, N, 1.0 / uFresnelIndice);
+
+		//formula application (cf. cours diapo 33)
+		float c = dot(I, N);
         float g = sqrt((uFresnelIndice * uFresnelIndice) + (c * c) - 1.0);
 
+		//left side of the formula
         float left = 0.5 * (((g - c) * (g - c)) / ((g + c) * (g + c)));
-        float right = 1.0 + (((c * (g + c) - 1.0) * (c * (g + c) - 1.0)) / ((c * (g - c) + 1.0) * (c * (g - c) + 1.0)));
+
+        //right side of the formula
+		float right = 1.0 + (((c * (g + c) - 1.0) * (c * (g + c) - 1.0)) / ((c * (g - c) + 1.0) * (c * (g - c) + 1.0)));
 		
-		float reflection = left * right;
+		float reflection = left * right; // fresnel factor
 		float transmission = 1.0 - reflection;
 		
 		vec4 colorReflection = vec4(textureCube(uSampler, reflectDirection.xzy).xyz * reflection, 1.0);
@@ -36,12 +43,17 @@ void main(void)
 		gl_FragColor = colorTransmission + colorReflection;	
 	}
 
-	else if (uIsMirroring) {
+	// Mirroir parfait
+	else if (uIsMirroring) { 
+		vec3 reflectDirection = mat3(uRotationMatrix) * reflect(-I,N);
         gl_FragColor = textureCube(uSampler, reflectDirection.xzy);
 	}
 
-	else if (uIsTransmitting) {
+	// Transmission
+	else if (uIsTransmitting) { 
+		vec3 transmissionDirection = mat3(uRotationMatrix) * refract(-I, N, 1.0 / uFresnelIndice);
 		gl_FragColor = textureCube(uSampler, transmissionDirection.xzy);
+		
 	}
 	else {
 		vec3 col = vec3(uColor.xyz) * dot(N,normalize(vec3(-pos3D)));
