@@ -25,6 +25,10 @@ var IMAGE_NAME = 'pos-z.jpg';
 var IMAGE_DEFAULT_WIDTH = 48;
 var IMAGE_DEFAULT_HEIGHT = 48;
 
+/**
+ * Open / Close a dropdow menu
+ * @param {Event} evt - The on-click event
+*/
 function toggleDropdown(evt) {
 
     var header = evt.target;
@@ -43,18 +47,26 @@ function toggleDropdown(evt) {
     }
 }
 
+/**
+ * Update the Fresnel indice value (UI and shaders)
+ */
 function updateValue() {
     let value = this.value;
     fresnelValue.innerText = value;
     FRESNEL_INDICE = value;
 }
 
+/**
+ * Open / Close the Menu
+ * @param {Event} evt - The on-click event
+ */
 function openMenu(evt) {
     var btn = evt.target;
     var menu = document.getElementById('menu__content');
     btn.style.display = 'none';
     menu.style.display = 'block';
 }
+
 
 function closeMenu() {
     var btn = document.getElementById('open-button');
@@ -98,34 +110,35 @@ function switchScene(evt, Name) {
 function initUI() {
 
     // Create options for model selection based on the ObjectLoader array
-    ObjectLoader.forEach(function (ObjName) {
-        var option = doc.createElement('option');
-        option.value = ObjName;
-        option.textContent = ObjName;
-        option.setAttribute('onclick', 'switchObject(' + ObjName.toUpperCase() + ');');
-        selects[0].appendChild(option);
-    });
+    if (ObjectLoader) {
+        ObjectLoader.forEach(function (ObjName) {
+            var option = doc.createElement('option');
+            option.value = ObjName;
+            option.textContent = ObjName;
+            option.setAttribute('onclick', 'switchObject(' + ObjName.toUpperCase() + ');');
+            selects[0].appendChild(option);
+        });
+    }
 
-    // Create images to add to the gallery of skybox images
-    ScenesLoader.forEach(function (SceneName) {
-        var img = doc.createElement('img'); // Create an image
-        // Set the image source, listener and attributes,
-        // If it's the default one, then add the active class
-        img.src = IMAGES_SRC + SceneName + '/' + IMAGE_NAME;
-        img.setAttribute('onclick', 'switchScene(event, \'' + SceneName + '\');');
-        img.width = IMAGE_DEFAULT_WIDTH;
-        img.height = IMAGE_DEFAULT_HEIGHT;
-        if (SceneName === DEFAULT_SKYBOX) img.classList.add('active');
-        // Finally append the image to the gallery
-        gallery.appendChild(img);
-    });
+    if (ScenesLoader) {
+        // Create images to add to the gallery of skybox images
+        ScenesLoader.forEach(function (SceneName) {
+            var img = doc.createElement('img'); // Create an image
+            // Set the image source, listener and attributes,
+            // If it's the default one, then add the active class
+            img.src = IMAGES_SRC + SceneName + '/' + IMAGE_NAME;
+            img.setAttribute('onclick', 'switchScene(event, \'' + SceneName + '\');');
+            img.width = IMAGE_DEFAULT_WIDTH;
+            img.height = IMAGE_DEFAULT_HEIGHT;
+            if (SceneName === DEFAULT_SKYBOX) img.classList.add('active');
+            // Finally append the image to the gallery
+            gallery.appendChild(img);
+        });
+    }
 
     // Reset color picker to default value
     colorPicker.value = rgbToHex(DEFAULT_COLOR);
-    console.log(DEFAULT_COLOR);
-    console.log(rgbToHex(DEFAULT_COLOR));
-    console.log (colorPicker.value);
-    
+
     // Reset select menus
     for (var i = 0; i < selects.length; i++) {
         selects[i].selectedIndex = 0;
