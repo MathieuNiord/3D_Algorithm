@@ -8,19 +8,13 @@ var rotMatrix = mat4.create();
 var distCENTER;
 
 // === OBJECTS =========================================
-var OBJ1 = null;	// The object that is rendered
 var BUNNY, MUSTANG, PORSCHE, SPHERE = null;
 var PLANE, SKYBOX = null;
 
-// === TOGGLES =========================================
-var isTherePlane = false;
-var isThereSkybox = true;
 
-// === COLOR & TEXTURE =================================
-var MODEL_COLOR = [0.8, 0.4, 0.4];
+// === TEXTURES ========================================
 let SKYBOX_TEXTURES_URL = "res/textures/skybox/";
 let IMAGES_FOLDERS = ['ocean', 'museum', 'yokohama'];
-var SKYBOX_SCENE = IMAGES_FOLDERS[0];
 let IMAGES_NAMES = ['pos-x', 'neg-x', 'pos-y', 'neg-y', 'pos-z', 'neg-z'];
 // Images pre-loading inside a Promise
 let preLoadingImages = new Promise((resolve, reject) => {
@@ -38,22 +32,6 @@ let preLoadingImages = new Promise((resolve, reject) => {
 	reject("error");
 });
 var IMAGES = {};
-
-// === MODES ===========================================
-var isMirroring = false;	// Toggle the use of mirroring
-var isTransmitting = false;	// Toggle the use of transmission (Fresnel)
-var FRESNEL_INDICE = 1.0;
-var SIGMA = 0.5;
-
-// const FRESNEL_INDICES = {
-// 	"AIR": 1.0,
-// 	"GLASS": 1.5,
-// 	"DIAMOND": 2.42,
-// 	"ICE": 1.31,
-// 	"OIL": 1.46,
-// 	"WATER": 1.33,
-// 	"STEEL": 2.0,
-// }
 
 
 // =====================================================
@@ -90,7 +68,7 @@ class objmesh {
 
 		// Colors
 		this.shader.uColor = gl.getUniformLocation(this.shader, "uColor");
-		gl.uniform3fv(this.shader.uColor, MODEL_COLOR);
+		gl.uniform3fv(this.shader.uColor, CONTROLLER.currentColor);
 
 		// Setting matrix uniforms
 		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
@@ -105,9 +83,9 @@ class objmesh {
 		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
-		gl.uniform1i(this.shader.uMirrorUniform, isMirroring && isThereSkybox);
-		gl.uniform1i(this.shader.uTransmitUniform, isTransmitting && isThereSkybox);
-		gl.uniform1f(this.shader.uFresnelIndiceUniform, FRESNEL_INDICE);
+		gl.uniform1i(this.shader.uMirrorUniform, CONTROLLER.isMirroring && CONTROLLER.isThereSkybox);
+		gl.uniform1i(this.shader.uTransmitUniform, CONTROLLER.isTransmitting && CONTROLLER.isThereSkybox);
+		gl.uniform1f(this.shader.uFresnelIndiceUniform, CONTROLLER.FRESNEL_INDICE);
 	}
 
 	// --------------------------------------------
@@ -332,7 +310,7 @@ class cubemap {
 		// for each face of the cube map, we load an image as a texture
 		for (var i = 0; i < targets.length; i++) {
 
-			this.texture.image = IMAGES[SKYBOX_SCENE][i];
+			this.texture.image = IMAGES[CONTROLLER.currentScene][i];
 
 			const load = (texture, target, image) => {
 				gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
@@ -514,7 +492,7 @@ function webGLStart() {
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	if (OBJ1) OBJ1.draw();
-	if (isTherePlane) PLANE.draw();
-	if (isThereSkybox) SKYBOX.draw();
+	if (CONTROLLER.currentObject) CONTROLLER.currentObject.draw();
+	if (CONTROLLER.isTherePlane) PLANE.draw();
+	if (CONTROLLER.isThereSkybox) SKYBOX.draw();
 }

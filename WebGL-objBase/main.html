@@ -8,6 +8,7 @@
 	<!-- Style -->
 	<link rel="stylesheet" type="text/css" href="style/main.css">
 	<!-- Scripts -->
+	<script defer type="text/javascript" src="src/controller.js"></script>
 	<script defer type="text/javascript" src="src/glMatrix.js"></script>
 	<script defer type="text/javascript" src="src/callbacks.js"></script>
 	<script defer type="text/javascript" src="src/colors.js"></script>
@@ -28,7 +29,7 @@
 
 	<div id="main_content">
 
-		<canvas id="WebGL-test" style="border:none;" width="1080" height="720"></canvas>
+		<canvas id="WebGL-test" style="border:none;" width="2180" height="1080"></canvas>
 		
 		<!-- "Unity" like Menu -->
 		<div class="menu">
@@ -74,7 +75,7 @@
 						<item>
 							<div class="row">
 								<label for="color">Colors:</label>
-								<input type="color" id="color_picker" name="color" value="#000000" oninput="MODEL_COLOR = hexToRgb(this.value);">
+								<input type="color" id="color_picker" name="color" value="#000000" oninput="CONTROLLER.setColor(this.value);">
 							</div>
 						</item>
 						<!-- Texture's mode selection -->
@@ -82,10 +83,11 @@
 							<div class="row">
 								<label for="texture_select">Texture:</label>
 								<select id="texture_select" name="Textures" class="selector" onclick="showFresnel();">
-									<option value="0" onclick="isMirroring = isTransmitting = false;" selected>None</option>
-									<option onclick="isMirroring = true; isTransmitting = false;">Perfect Mirror</option>
-									<option onclick="isTransmitting = true; isMirroring = false;">Transmission</option>
-									<option onclick="isTransmitting = true; isMirroring = true;">M + T</option>
+									<option value="0" onclick="CONTROLLER.isMirroring = CONTROLLER.isTransmitting = false;" selected>None</option>
+									<option onclick="CONTROLLER.isMirroring = true; CONTROLLER.isTransmitting = false;">Perfect Mirror</option>
+									<option onclick="CONTROLLER.isTransmitting = true; CONTROLLER.isMirroring = false;">Transmission</option>
+									<option onclick="CONTROLLER.isTransmitting = true; CONTROLLER.isMirroring = true;">M + T</option>
+									<option onclick="CONTROLLER.isTransmitting = false; CONTROLLER.isMirroring = false;">Cook-Torrance</option>
 								</select>
 							</div>
 						</item>

@@ -243,14 +243,12 @@ label {
 .gallery div img.active {
     opacity: 1;
     border: 3px solid #a7a7a7;
-    width: 44px;
-    height: 44px;
 }
 .gallery div img:hover{
     opacity: 1;
 }
 
-/* The fresnel nI coefficient slider */
+/* Sliders */
 input[type=range] {
     position: absolute;
     width: 50%;

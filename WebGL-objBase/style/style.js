@@ -21,8 +21,6 @@ const ObjectLoader = [ 'Bunny', 'Mustang', 'Porsche', 'Sphere' ]; // 3D Models
 const ScenesLoader = IMAGES_FOLDERS; // Skybox Gallery
 
 // Gallery of sykbox images loading
-const DEFAULT_COLOR = MODEL_COLOR;
-const DEFAULT_SKYBOX = SKYBOX_SCENE;
 const IMAGES_SRC = SKYBOX_TEXTURES_URL;
 const DEFAULT_IMAGE_PREVIEW = 'pos-z.jpg';
 const DEFAULT_IMAGE_WIDTH = 48;
@@ -53,11 +51,16 @@ function toggleDropdown(evt) {
 /**
  * Update a value from an input range (UI and shaders)
  */
-function updateValue(indice) {
-    let value = this.value;
-    span = this.nextElementSibling;
-    span.innerText = value;
-    indice = value;
+function updateValue(input, target) {
+    console.log(target);
+    let slider = input.target;
+    let value = slider.value;
+    // Get nearest span of class value_display
+    let valueDisplay = slider.nextElementSibling;
+    // Update the value of the span
+    valueDisplay.innerHTML = value;
+    // Update the value of the shader
+    CONTROLLER.updateValue(target, value);
 }
 
 /**
@@ -81,15 +84,7 @@ function closeMenu() {
  */
 function showFresnel() {
     var fresnel = document.getElementById('fresnel');
-    fresnel.style.display = isTransmitting ? 'block' : 'none';
-}
-
-/**
- * Switch the object to draw
- * @param {OBJ3D} Object 
- */
-let setObject = (Object) => {
-    OBJ1 = (OBJ1 !== Object) ? Object : OBJ1;
+    fresnel.style.display = CONTROLLER.isTransmitting ? 'block' : 'none';
 }
 
 /**
@@ -99,8 +94,8 @@ let setObject = (Object) => {
  */
 function switchScene(evt, Name) {
 
-    if (SKYBOX_SCENE === Name
-        || !isThereSkybox
+    if (CONTROLLER.currentScene === Name
+        || !CONTROLLER.isThereSkybox
         || !ScenesLoader.includes(Name)
     ) return;
 
@@ -113,7 +108,7 @@ function switchScene(evt, Name) {
     selectedImg.classList.add('active');
 
     // Change the skybox scene
-    SKYBOX_SCENE = Name;
+    CONTROLLER.setScene(Name);
     delete SKYBOX;
     SKYBOX = new cubemap();
 }
@@ -133,7 +128,7 @@ function initUI() {
             var option = doc.createElement('option');
             option.value = ObjName;
             option.textContent = ObjName;
-            option.setAttribute('onclick', 'setObject(' + ObjName.toUpperCase() + ');');
+            option.setAttribute('onclick', 'CONTROLLER.setObject(' + ObjName.toUpperCase() + ');');
             selects[0].appendChild(option);
         });
     }
@@ -148,14 +143,14 @@ function initUI() {
             img.setAttribute('onclick', 'switchScene(event, \'' + SceneName + '\');');
             img.width = DEFAULT_IMAGE_WIDTH;
             img.height = DEFAULT_IMAGE_HEIGHT;
-            if (SceneName === DEFAULT_SKYBOX) img.classList.add('active');
+            if (SceneName === CONTROLLER.currentScene) img.classList.add('active');
             // Finally append the image to the gallery
             gallery.appendChild(img);
         });
     }
 
     // Reset color picker to default value
-    colorPicker.value = rgbToHex(DEFAULT_COLOR);
+    colorPicker.value = rgbToHex(CONTROLLER.currentColor);
     
     // Reset select menus
     for (var i = 0; i < selects.length; i++) {
@@ -163,24 +158,24 @@ function initUI() {
     }
 
     // Reset the plane checkbox
-    planeToggle.checked = isTherePlane;
+    planeToggle.checked = CONTROLLER.isTherePlane;
     planeToggle.addEventListener('change', function () {
-        isTherePlane = this.checked;
+        CONTROLLER.isTherePlane = this.checked;
     });
 
     // Reset the skybox checkbox
-    skyboxCheckBox.checked = isThereSkybox;
+    skyboxCheckBox.checked = CONTROLLER.isThereSkybox;
     skyboxCheckBox.addEventListener('change', function () {
-        isThereSkybox = this.checked;
+        CONTROLLER.isThereSkybox = this.checked;
     });
 
     // Reset slider and link it to the fresnel value
-    fresnelSlider.value = FRESNEL_INDICE;
-    fresnelValue.innerText = FRESNEL_INDICE;
-    fresnelSlider.addEventListener('input', updateValue, { FRESNEL_INDICE });
+    fresnelSlider.value = CONTROLLER.FRESNEL_INDICE;
+    fresnelValue.innerText = CONTROLLER.FRESNEL_INDICE;
+    fresnelSlider.addEventListener('input', (input) => updateValue(input, 'FRESNEL'));
 
     // Reset slider and link it to the sigma value
-    sigmaSlider.value = SIGMA;
-    sigmaValue.innerText = SIGMA;
-    sigmaSlider.addEventListener('input', updateValue, { SIGMA });
+    sigmaSlider.value = CONTROLLER.SIGMA;
+    sigmaValue.innerText = CONTROLLER.SIGMA;
+    sigmaSlider.addEventListener('input', (input) => updateValue(input, 'SIGMA'));
 }
