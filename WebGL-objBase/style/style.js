@@ -77,12 +77,15 @@ function closeMenu() {
 }
 
 /**
- * Show the Fresnel part
+ * Show the Fresnel and Sigma part
  */
-function showFresnel() {
+function showFresnelAndSigma() {
     var fresnel = document.getElementById('fresnel');
     fresnel.style.display = isTransmitting ? 'block' : 'none';
+    var sigma = document.getElementById('sigma');
+    sigma.style.display = isCookTorrance ? 'block' : 'none';
 }
+
 
 /**
  * Switch the object to draw

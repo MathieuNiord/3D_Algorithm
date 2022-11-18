@@ -81,11 +81,12 @@
 						<item>
 							<div class="row">
 								<label for="texture_select">Texture:</label>
-								<select id="texture_select" name="Textures" class="selector" onclick="showFresnel();">
+								<select id="texture_select" name="Textures" class="selector" onclick="showFresnelAndSigma();">
 									<option value="0" onclick="isMirroring = isTransmitting = false;" selected>None</option>
-									<option onclick="isMirroring = true; isTransmitting = false;">Perfect Mirror</option>
-									<option onclick="isTransmitting = true; isMirroring = false;">Transmission</option>
-									<option onclick="isTransmitting = true; isMirroring = true;">M + T</option>
+									<option onclick="isTransmitting = false; isMirroring = true;  isCookTorrance = false;">Perfect Mirror</option>
+									<option onclick="isTransmitting = true;  isMirroring = false; isCookTorrance = false;">Transmission</option>
+									<option onclick="isTransmitting = true;  isMirroring = true;  isCookTorrance = false;">M + T</option>
+									<option onclick="isTransmitting = true;  isMirroring = true;  isCookTorrance = true;">Cook-Torrance</option>
 								</select>
 							</div>
 						</item>
@@ -99,9 +100,9 @@
 						</item>
 						<!-- Sigma (Cook-Torrance) slider input -->
 						<item>
-							<div class="row" id="sigma" style="display: block;">
+							<div class="row" id="sigma" style="display: none;">
 								<label for="sigma_select">Sigma:</label>
-								<input type="range" id="sigma_range_select" name="sigma_select" min="0" max="0.5" step="0.01">
+								<input type="range" id="sigma_range_select" name="sigma_select" min="0.01" max="0.5" step="0.01">
 								<span id="sigma_value" class="value_display"></span>
 							</div>
 						</item>

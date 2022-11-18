@@ -42,8 +42,9 @@ var IMAGES = {};
 // === MODES ===========================================
 var isMirroring = false;	// Toggle the use of mirroring
 var isTransmitting = false;	// Toggle the use of transmission (Fresnel)
-var FRESNEL_INDICE = 1.0;
-var SIGMA = 0.5;
+var isCookTorrance = false; // Toggle the use of Cook-Torrance
+var FRESNEL_INDICE = 1.1;
+var SIGMA = 0.04;
 
 // const FRESNEL_INDICES = {
 // 	"AIR": 1.0,
@@ -102,12 +103,17 @@ class objmesh {
 		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
 		this.shader.uMirrorUniform = gl.getUniformLocation(this.shader, "uIsMirroring");
 		this.shader.uTransmitUniform = gl.getUniformLocation(this.shader, "uIsTransmitting");
+		this.shader.uCookTorrance = gl.getUniformLocation(this.shader, "uIsCookTorrance");
 		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
+		this.shader.uSigmaUniform = gl.getUniformLocation(this.shader, "uSigma");
+		
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
 		gl.uniform1i(this.shader.uMirrorUniform, isMirroring && isThereSkybox);
 		gl.uniform1i(this.shader.uTransmitUniform, isTransmitting && isThereSkybox);
+		gl.uniform1i(this.shader.uCookTorrance, isCookTorrance && isThereSkybox);
 		gl.uniform1f(this.shader.uFresnelIndiceUniform, FRESNEL_INDICE);
+		gl.uniform1f(this.shader.uSigmaUniform, SIGMA);
 	}
 
 	// --------------------------------------------
