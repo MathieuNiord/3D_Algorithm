@@ -8,11 +8,11 @@
 	<!-- Style -->
 	<link rel="stylesheet" type="text/css" href="style/main.css">
 	<!-- Scripts -->
-	<script defer type="text/javascript" src="glMatrix.js"></script>
-	<script defer type="text/javascript" src="callbacks.js"></script>
-	<script defer type="text/javascript" src="colors.js"></script>
-	<script defer type="text/javascript" src="glCourseBasis.js"></script>
-	<script defer type="text/javascript" src="objLoader.js"></script>
+	<script defer type="text/javascript" src="src/glMatrix.js"></script>
+	<script defer type="text/javascript" src="src/callbacks.js"></script>
+	<script defer type="text/javascript" src="src/colors.js"></script>
+	<script defer type="text/javascript" src="src/glCourseBasis.js"></script>
+	<script defer type="text/javascript" src="src/objLoader.js"></script>
 	<script defer type="text/javascript" src="style/style.js"></script>
 </head>
 
@@ -35,12 +35,12 @@
 
 			<!-- This button appears on the right corner of the canvas,
 				it will open the menu on the "click" event -->
-			<button id="open-button" onclick="openMenu(event)">Menu</button>
+			<button id="open_menu_btn" onclick="openMenu(event)">Menu</button>
 
 			<div id="menu__content">
 
 				<!-- This button will close the menu__content div -->
-				<button id="close" onclick="closeMenu()">Close</button>
+				<button id="close_menu_btn" onclick="closeMenu()">Close</button>
 
 				<!-- First dropdown menu: Objects
 					- A checkbox to toggle the plane display
@@ -93,8 +93,16 @@
 						<item>
 							<div class="row" id="fresnel" style="display: none;">
 								<label for="fresnel_coeff">nI:</label>
-								<input type="range" id="fresnel_coeff" name="fresnel_coeff" min="1.0" max="2.0" step="0.1">
-								<span id="fresnel_coeff_value"></span>
+								<input type="range" id="fresnel_coeff" name="fresnel_coeff" min="1.0" max="2.0" step="0.01">
+								<span id="fresnel_coeff_value" class="value_display"></span>
+							</div>
+						</item>
+						<!-- Sigma (Cook-Torrance) slider input -->
+						<item>
+							<div class="row" id="sigma" style="display: block;">
+								<label for="sigma_select">Sigma:</label>
+								<input type="range" id="sigma_range_select" name="sigma_select" min="0" max="0.5" step="0.01">
+								<span id="sigma_value" class="value_display"></span>
 							</div>
 						</item>
 					</div>
@@ -111,7 +119,7 @@
 					</div>
 					<input type="checkbox" id="skybox_checkbox" name="scene" onclick="isThereSkybox = this.checked;">
 					<div class="content__wrapper">
-						<!-- Skyboxe textures gallery -->
+						<!-- Skybox textures gallery -->
 						<item>
 							<div class="row gallery">
 								<label for="gallery">Scenes:</label>

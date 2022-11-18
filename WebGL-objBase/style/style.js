@@ -1,7 +1,8 @@
 var doc = document;
 
-var openMenuBtn = doc.getElementById('open-button');
-var closeBtn = doc.getElementById('close-button');
+var openMenuBtn = doc.getElementById('open_menu_btn');
+var closeBtn = doc.getElementById('close_menu_btn');
+var menu = doc.getElementById('menu__content');
 var dropdowns = doc.getElementsByClassName('dropdown');
 
 // Selectors / Mutators
@@ -11,19 +12,21 @@ var colorPicker = doc.getElementById('color_picker');
 var skyboxCheckBox = doc.getElementById('skybox_checkbox');
 var fresnelSlider = doc.getElementById('fresnel_coeff');
 var fresnelValue = doc.getElementById('fresnel_coeff_value');
+var sigmaSlider = doc.getElementById('sigma_range_select');
+var sigmaValue = doc.getElementById('sigma_value');
 var gallery = doc.getElementById('gallery');
 
-// Object loading
-var ObjectLoader = [ 'Bunny', 'Mustang', 'Porsche', 'Sphere' ];
+// Loaders
+const ObjectLoader = [ 'Bunny', 'Mustang', 'Porsche', 'Sphere' ]; // 3D Models
+const ScenesLoader = IMAGES_FOLDERS; // Skybox Gallery
 
 // Gallery of sykbox images loading
-var DEFAULT_COLOR = MODEL_COLOR;
-var DEFAULT_SKYBOX = SKYBOX_SCENE;
-var ScenesLoader = IMAGES_FOLDERS;
-var IMAGES_SRC = SKYBOX_TEXTURES_URL;
-var IMAGE_NAME = 'pos-z.jpg';
-var IMAGE_DEFAULT_WIDTH = 48;
-var IMAGE_DEFAULT_HEIGHT = 48;
+const DEFAULT_COLOR = MODEL_COLOR;
+const DEFAULT_SKYBOX = SKYBOX_SCENE;
+const IMAGES_SRC = SKYBOX_TEXTURES_URL;
+const DEFAULT_IMAGE_PREVIEW = 'pos-z.jpg';
+const DEFAULT_IMAGE_WIDTH = 48;
+const DEFAULT_IMAGE_HEIGHT = 48;
 
 /**
  * Open / Close a dropdow menu
@@ -48,44 +51,52 @@ function toggleDropdown(evt) {
 }
 
 /**
- * Update the Fresnel indice value (UI and shaders)
+ * Update a value from an input range (UI and shaders)
  */
-function updateValue() {
+function updateValue(indice) {
     let value = this.value;
-    fresnelValue.innerText = value;
-    FRESNEL_INDICE = value;
+    span = this.nextElementSibling;
+    span.innerText = value;
+    indice = value;
 }
 
 /**
- * Open / Close the Menu
- * @param {Event} evt - The on-click event
+ * Open the Menu
  */
-function openMenu(evt) {
-    var btn = evt.target;
-    var menu = document.getElementById('menu__content');
-    btn.style.display = 'none';
+function openMenu() {
+    openMenuBtn.style.display = 'none';
     menu.style.display = 'block';
 }
 
-
+/**
+ * Close the Menu
+ */
 function closeMenu() {
-    var btn = document.getElementById('open-button');
-    var menu = document.getElementById('menu__content');
-    btn.style.display = 'block';
+    openMenuBtn.style.display = 'block';
     menu.style.display = 'none';
 }
 
+/**
+ * Show the Fresnel part
+ */
 function showFresnel() {
     var fresnel = document.getElementById('fresnel');
     fresnel.style.display = isTransmitting ? 'block' : 'none';
 }
 
-// Switch the object to display
-function switchObject(Object) {
-    if (OBJ1 !== Object) OBJ1 = Object;
+/**
+ * Switch the object to draw
+ * @param {OBJ3D} Object 
+ */
+let setObject = (Object) => {
+    OBJ1 = (OBJ1 !== Object) ? Object : OBJ1;
 }
 
-// Switch the scene (skybox)
+/**
+ * Switch the skybox scene
+ * @param {Event} evt - The on-click event
+ * @param {String} Name - The name of the scene to switch to
+ */
 function switchScene(evt, Name) {
 
     if (SKYBOX_SCENE === Name
@@ -104,10 +115,17 @@ function switchScene(evt, Name) {
     // Change the skybox scene
     SKYBOX_SCENE = Name;
     delete SKYBOX;
-    SKYBOX = new cubemaps();
+    SKYBOX = new cubemap();
 }
 
+/**
+ * Initialize the user interface (DOM interactions)
+ */
 function initUI() {
+
+    // Init open and close buttons events
+    openMenuBtn.addEventListener('click', openMenu);
+    closeBtn.addEventListener('click', closeMenu);
 
     // Create options for model selection based on the ObjectLoader array
     if (ObjectLoader) {
@@ -115,7 +133,7 @@ function initUI() {
             var option = doc.createElement('option');
             option.value = ObjName;
             option.textContent = ObjName;
-            option.setAttribute('onclick', 'switchObject(' + ObjName.toUpperCase() + ');');
+            option.setAttribute('onclick', 'setObject(' + ObjName.toUpperCase() + ');');
             selects[0].appendChild(option);
         });
     }
@@ -126,10 +144,10 @@ function initUI() {
             var img = doc.createElement('img'); // Create an image
             // Set the image source, listener and attributes,
             // If it's the default one, then add the active class
-            img.src = IMAGES_SRC + SceneName + '/' + IMAGE_NAME;
+            img.src = IMAGES_SRC + SceneName + '/' + DEFAULT_IMAGE_PREVIEW;
             img.setAttribute('onclick', 'switchScene(event, \'' + SceneName + '\');');
-            img.width = IMAGE_DEFAULT_WIDTH;
-            img.height = IMAGE_DEFAULT_HEIGHT;
+            img.width = DEFAULT_IMAGE_WIDTH;
+            img.height = DEFAULT_IMAGE_HEIGHT;
             if (SceneName === DEFAULT_SKYBOX) img.classList.add('active');
             // Finally append the image to the gallery
             gallery.appendChild(img);
@@ -159,5 +177,10 @@ function initUI() {
     // Reset slider and link it to the fresnel value
     fresnelSlider.value = FRESNEL_INDICE;
     fresnelValue.innerText = FRESNEL_INDICE;
-    fresnelSlider.addEventListener('input', updateValue);
+    fresnelSlider.addEventListener('input', updateValue, { FRESNEL_INDICE });
+
+    // Reset slider and link it to the sigma value
+    sigmaSlider.value = SIGMA;
+    sigmaValue.innerText = SIGMA;
+    sigmaSlider.addEventListener('input', updateValue, { SIGMA });
 }

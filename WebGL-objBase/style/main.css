@@ -40,27 +40,29 @@ header img {
     align-items: center;
     justify-content: center;
     z-index: 0;
+    height: 100vh;
 }
 
 /* Canvas style */
 #WebGL-test {
     min-width: 100%;
-    max-width: 100%;
     max-height: auto;
     float: left;
     z-index: 0;
 }
 
-/* Menu global style */
+/* Place menu in right upper corner od the WebGL-test */
 .menu {
     position: absolute;
-    top: 4vh;
-    right: 14vh;
+    top: 0;
+    right: 0;
     z-index: 1;
+    padding: 0.5rem;
+    border-radius: 0 0 0 0.5rem;
 }
 
 /* "Open Menu" button */
-#open-button {
+#open_menu_btn {
     background-color: rgb(83, 83, 83);
     color: white;
     border: none;
@@ -83,7 +85,7 @@ header img {
 }
 
 /* "Close Menu" button */
-#close {
+#close_menu_btn {
     background-color: rgba(83, 83, 83, 0);
     color: white;
     border: none;
@@ -93,7 +95,7 @@ header img {
     bottom: 1rem;
     height: 5%;
 }
-#close:hover {
+#close_menu_btn:hover {
     opacity: 0.8;
 }
 
@@ -249,22 +251,22 @@ label {
 }
 
 /* The fresnel nI coefficient slider */
-#fresnel_coeff {
+input[type=range] {
     position: absolute;
     width: 50%;
     right: 20%;
     top: 50%;
     transform: translateY(-50%);
 }
-#fresnel_coeff_value {
+.value_display {
     position: absolute;
-    right: 5%;
+    right: 3%;
     top: 50%;
     transform: translateY(-50%);
     background-color: #444444;
     color: white;
     border-radius: 2px;
-    width: 10%;
+    width: 15%;
     height: 35%;
     font-size: 14px;
 }
