@@ -82,12 +82,21 @@
 						<item>
 							<div class="row">
 								<label for="texture_select">Texture:</label>
-								<select id="texture_select" name="Textures" class="selector" onclick="showFresnel();">
-									<option value="0" onclick="CONTROLLER.isMirroring = CONTROLLER.isTransmitting = false;" selected>None</option>
+								<select id="texture_select" name="Textures" class="selector" onclick="showFresnelAndSigma();">
+									<option value="0" onclick="
+										CONTROLLER.isMirroring
+										= CONTROLLER.isTransmitting
+										= CONTROLLER.isCookTorrance
+										= false;
+									" selected>None</option>
 									<option onclick="CONTROLLER.isMirroring = true; CONTROLLER.isTransmitting = false;">Perfect Mirror</option>
 									<option onclick="CONTROLLER.isTransmitting = true; CONTROLLER.isMirroring = false;">Transmission</option>
 									<option onclick="CONTROLLER.isTransmitting = true; CONTROLLER.isMirroring = true;">M + T</option>
-									<option onclick="CONTROLLER.isTransmitting = false; CONTROLLER.isMirroring = false;">Cook-Torrance</option>
+									<option onclick="
+										CONTROLLER.isTransmitting = false;
+										CONTROLLER.isMirroring = false;
+										CONTROLLER.isCookTorrance = true;
+									">Cook-Torrance</option>
 								</select>
 							</div>
 						</item>
@@ -101,9 +110,9 @@
 						</item>
 						<!-- Sigma (Cook-Torrance) slider input -->
 						<item>
-							<div class="row" id="sigma" style="display: block;">
+							<div class="row" id="sigma" style="display: none;">
 								<label for="sigma_select">Sigma:</label>
-								<input type="range" id="sigma_range_select" name="sigma_select" min="0" max="0.5" step="0.01">
+								<input type="range" id="sigma_range_select" name="sigma_select" min="0.01" max="0.5" step="0.01">
 								<span id="sigma_value" class="value_display"></span>
 							</div>
 						</item>

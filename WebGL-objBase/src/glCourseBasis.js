@@ -80,7 +80,10 @@ class objmesh {
 		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
 		this.shader.uMirrorUniform = gl.getUniformLocation(this.shader, "uIsMirroring");
 		this.shader.uTransmitUniform = gl.getUniformLocation(this.shader, "uIsTransmitting");
+		this.shader.uCookTorrance = gl.getUniformLocation(this.shader, "uIsCookTorrance");
 		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
+		this.shader.uSigmaUniform = gl.getUniformLocation(this.shader, "uSigma");
+		
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
 		gl.uniform1i(this.shader.uMirrorUniform, CONTROLLER.isMirroring && CONTROLLER.isThereSkybox);

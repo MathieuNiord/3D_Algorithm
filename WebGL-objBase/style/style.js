@@ -80,11 +80,13 @@ function closeMenu() {
 }
 
 /**
- * Show the Fresnel part
+ * Show the Fresnel and Sigma part
  */
-function showFresnel() {
+function showFresnelAndSigma() {
     var fresnel = document.getElementById('fresnel');
+    var sigma = document.getElementById('sigma');
     fresnel.style.display = CONTROLLER.isTransmitting ? 'block' : 'none';
+    sigma.style.display = !CONTROLLER.isTransmitting && CONTROLLER.isCookTorrance ? 'block' : 'none';
 }
 
 /**
@@ -169,12 +171,12 @@ function initUI() {
         CONTROLLER.isThereSkybox = this.checked;
     });
 
-    // Reset slider and link it to the fresnel value
+    // Reset slider and bind it to the fresnel value
     fresnelSlider.value = CONTROLLER.FRESNEL_INDICE;
     fresnelValue.innerText = CONTROLLER.FRESNEL_INDICE;
     fresnelSlider.addEventListener('input', (input) => updateValue(input, 'FRESNEL'));
 
-    // Reset slider and link it to the sigma value
+    // Reset slider and bind it to the sigma value
     sigmaSlider.value = CONTROLLER.SIGMA;
     sigmaValue.innerText = CONTROLLER.SIGMA;
     sigmaSlider.addEventListener('input', (input) => updateValue(input, 'SIGMA'));
