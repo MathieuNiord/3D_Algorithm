@@ -11,8 +11,8 @@ const FRESNEL_INDICES = {
 	"STEEL": 2.0,
 }
 
-const DEFAULT_FRESNEL   = { min: 1.0, max: 2.0, default: 1.0 };
-const DEFAULT_SIGMA     = { min: 0.0, max: 0.5, default: FRESNEL_INDICES.AIR };
+const DEFAULT_FRESNEL   = { min: 1.0, max: 2.0, default: FRESNEL_INDICES.AIR };
+const DEFAULT_SIGMA     = { min: 0.0, max: 0.5, default: 1.0 };
 
 class controller {
 
@@ -24,6 +24,7 @@ class controller {
         this.isThereSkybox = true;
         this.isMirroring = false;
         this.isTransmitting = false;
+        this.isCookTorrance = false;
         this.FRESNEL_INDICE = DEFAULT_FRESNEL.default;
         this.SIGMA = DEFAULT_SIGMA.default;
     }
