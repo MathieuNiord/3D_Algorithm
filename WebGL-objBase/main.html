@@ -89,12 +89,12 @@
 										= CONTROLLER.isCookTorrance
 										= false;
 									" selected>None</option>
-									<option onclick="CONTROLLER.isMirroring = true; CONTROLLER.isTransmitting = false;">Perfect Mirror</option>
-									<option onclick="CONTROLLER.isTransmitting = true; CONTROLLER.isMirroring = false;">Transmission</option>
-									<option onclick="CONTROLLER.isTransmitting = true; CONTROLLER.isMirroring = true;">M + T</option>
+									<option onclick="CONTROLLER.isMirroring = true; CONTROLLER.isTransmitting = CONTROLLER.isCookTorrance = false;">Perfect Mirror</option>
+									<option onclick="CONTROLLER.isTransmitting = true; CONTROLLER.isMirroring = CONTROLLER.isCookTorrance = false;">Transmission</option>
+									<option onclick="CONTROLLER.isTransmitting = CONTROLLER.isMirroring = true;">M + T</option>
 									<option onclick="
-										CONTROLLER.isTransmitting = false;
-										CONTROLLER.isMirroring = false;
+										CONTROLLER.isTransmitting =
+										CONTROLLER.isMirroring =
 										CONTROLLER.isCookTorrance = true;
 									">Cook-Torrance</option>
 								</select>
@@ -114,6 +114,24 @@
 								<label for="sigma_select">Sigma:</label>
 								<input type="range" id="sigma_range_select" name="sigma_select" min="0.01" max="0.5" step="0.01">
 								<span id="sigma_value" class="value_display"></span>
+							</div>
+						</item>
+						<!-- Sliders x, y and z for light position -->
+						<item>
+							<div class="row">
+								<label for="light_x">X:</label>
+								<input type="range" id="light_x" name="light_x" min="-10.0" max="10.0" step="0.1">
+								<span id="light_x_value" class="value_display"></span>
+							</div>
+							<div class="row">
+								<label for="light_y">Y:</label>
+								<input type="range" id="light_y" name="light_y" min="-10.0" max="10.0" step="0.1">
+								<span id="light_y_value" class="value_display"></span>
+							</div>
+							<div class="row">
+								<label for="light_z">Z:</label>
+								<input type="range" id="light_z" name="light_z" min="-10.0" max="10.0" step="0.1">
+								<span id="light_z_value" class="value_display"></span>
 							</div>
 						</item>
 					</div>

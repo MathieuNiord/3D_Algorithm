@@ -10,10 +10,24 @@ var selects = doc.getElementsByClassName('selector');
 var planeToggle = doc.getElementById('plane_checkbox');
 var colorPicker = doc.getElementById('color_picker');
 var skyboxCheckBox = doc.getElementById('skybox_checkbox');
+
+// Sliders
+// ==========================================================
 var fresnelSlider = doc.getElementById('fresnel_coeff');
 var fresnelValue = doc.getElementById('fresnel_coeff_value');
+
 var sigmaSlider = doc.getElementById('sigma_range_select');
 var sigmaValue = doc.getElementById('sigma_value');
+
+var lightPosSliderX = doc.getElementById('light_x');
+var lightPosValueX = doc.getElementById('light_x_value');
+var lightPosSliderY = doc.getElementById('light_y');
+var lightPosValueY = doc.getElementById('light_y_value');
+var lightPosSliderZ = doc.getElementById('light_z');
+var lightPosValueZ = doc.getElementById('light_z_value');
+// ==========================================================
+
+// Gallery
 var gallery = doc.getElementById('gallery');
 
 // Loaders
@@ -52,7 +66,6 @@ function toggleDropdown(evt) {
  * Update a value from an input range (UI and shaders)
  */
 function updateValue(input, target) {
-    console.log(target);
     let slider = input.target;
     let value = slider.value;
     // Get nearest span of class value_display
@@ -86,7 +99,7 @@ function showFresnelAndSigma() {
     var fresnel = document.getElementById('fresnel');
     var sigma = document.getElementById('sigma');
     fresnel.style.display = CONTROLLER.isTransmitting ? 'block' : 'none';
-    sigma.style.display = !CONTROLLER.isTransmitting && CONTROLLER.isCookTorrance ? 'block' : 'none';
+    sigma.style.display = CONTROLLER.isCookTorrance ? 'block' : 'none';
 }
 
 /**
@@ -96,7 +109,7 @@ function showFresnelAndSigma() {
  */
 function switchScene(evt, Name) {
 
-    if (CONTROLLER.currentScene === Name
+    if (CONTROLLER.SCENE === Name
         || !CONTROLLER.isThereSkybox
         || !ScenesLoader.includes(Name)
     ) return;
@@ -145,14 +158,14 @@ function initUI() {
             img.setAttribute('onclick', 'switchScene(event, \'' + SceneName + '\');');
             img.width = DEFAULT_IMAGE_WIDTH;
             img.height = DEFAULT_IMAGE_HEIGHT;
-            if (SceneName === CONTROLLER.currentScene) img.classList.add('active');
+            if (SceneName === CONTROLLER.SCENE) img.classList.add('active');
             // Finally append the image to the gallery
             gallery.appendChild(img);
         });
     }
 
     // Reset color picker to default value
-    colorPicker.value = rgbToHex(CONTROLLER.currentColor);
+    colorPicker.value = rgbToHex(CONTROLLER.COLOR);
     
     // Reset select menus
     for (var i = 0; i < selects.length; i++) {
@@ -180,4 +193,20 @@ function initUI() {
     sigmaSlider.value = CONTROLLER.SIGMA;
     sigmaValue.innerText = CONTROLLER.SIGMA;
     sigmaSlider.addEventListener('input', (input) => updateValue(input, 'SIGMA'));
+
+    // Reset slider and bind it to the light position value
+
+    // X
+    lightPosSliderX.value = CONTROLLER.LIGHT_POSITION[0];
+    lightPosValueX.innerText = CONTROLLER.LIGHT_POSITION[0];
+    lightPosSliderX.addEventListener('input', (input) => updateValue(input, 'LIGHT_POS_X'));
+    // Y
+    lightPosSliderY.value = CONTROLLER.LIGHT_POSITION[1];
+    lightPosValueY.innerText = CONTROLLER.LIGHT_POSITION[1];
+    lightPosSliderY.addEventListener('input', (input) => updateValue(input, 'LIGHT_POS_Y'));
+    // Z
+    lightPosSliderZ.value = CONTROLLER.LIGHT_POSITION[2];
+    lightPosValueZ.innerText = CONTROLLER.LIGHT_POSITION[2];
+    lightPosSliderZ.addEventListener('input', (input) => updateValue(input, 'LIGHT_POS_Z'));
+
 }

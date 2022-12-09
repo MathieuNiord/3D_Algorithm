@@ -1,5 +1,4 @@
 
-
 // =====================================================
 // Mouse management
 // =====================================================
@@ -79,3 +78,25 @@ function handleMouseMove(event) {
 	lastMouseX = newX
 	lastMouseY = newY;
 }
+
+// =====================================================
+/* function handleMouseMove(event) {
+
+	if (!mouseDown) return;
+
+	var newX = event.clientX;
+	var newY = event.clientY;
+	var deltaX = newX - lastMouseX;
+	var deltaY = newY - lastMouseY;
+
+	if (event.shiftKey) {
+		distCENTER[2] += deltaY / 100.0;
+	} else {
+		// TODO: change the position light
+		CONTROLLER.updateValue(degToRad(deltaX / 5));
+		rotX += degToRad(deltaY / 5);
+	}
+
+	lastMouseX = newX
+	lastMouseY = newY;
+} */

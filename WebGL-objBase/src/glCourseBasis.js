@@ -68,7 +68,7 @@ class objmesh {
 
 		// Colors
 		this.shader.uColor = gl.getUniformLocation(this.shader, "uColor");
-		gl.uniform3fv(this.shader.uColor, CONTROLLER.currentColor);
+		gl.uniform3fv(this.shader.uColor, CONTROLLER.COLOR);
 
 		// Setting matrix uniforms
 		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
@@ -83,12 +83,15 @@ class objmesh {
 		this.shader.uCookTorrance = gl.getUniformLocation(this.shader, "uIsCookTorrance");
 		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
 		this.shader.uSigmaUniform = gl.getUniformLocation(this.shader, "uSigma");
-		
+		this.shader.uLightPositionUniform = gl.getUniformLocation(this.shader, "uLightPosition");
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
 		gl.uniform1i(this.shader.uMirrorUniform, CONTROLLER.isMirroring && CONTROLLER.isThereSkybox);
 		gl.uniform1i(this.shader.uTransmitUniform, CONTROLLER.isTransmitting && CONTROLLER.isThereSkybox);
+		gl.uniform1i(this.shader.uCookTorrance, CONTROLLER.isCookTorrance);
 		gl.uniform1f(this.shader.uFresnelIndiceUniform, CONTROLLER.FRESNEL_INDICE);
+		gl.uniform1f(this.shader.uSigmaUniform, CONTROLLER.SIGMA);
+		gl.uniform3fv(this.shader.uLightPositionUniform, CONTROLLER.LIGHT_POSITION);
 	}
 
 	// --------------------------------------------
@@ -313,7 +316,7 @@ class cubemap {
 		// for each face of the cube map, we load an image as a texture
 		for (var i = 0; i < targets.length; i++) {
 
-			this.texture.image = IMAGES[CONTROLLER.currentScene][i];
+			this.texture.image = IMAGES[CONTROLLER.SCENE][i];
 
 			const load = (texture, target, image) => {
 				gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
@@ -495,7 +498,7 @@ function webGLStart() {
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	if (CONTROLLER.currentObject) CONTROLLER.currentObject.draw();
+	if (CONTROLLER.OBJECT) CONTROLLER.OBJECT.draw();
 	if (CONTROLLER.isTherePlane) PLANE.draw();
 	if (CONTROLLER.isThereSkybox) SKYBOX.draw();
 }
