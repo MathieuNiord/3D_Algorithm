@@ -63,13 +63,9 @@ class controller {
     }
 
     updateValue(target, value) {
-        console.log("update value" + value);
         switch (target) {
             case "FRESNEL": this.setFresnel(value); break;
             case "SIGMA": this.setSigma(value); break;
-            case "LIGHT_POS_X": this.setLightPosition([value, this.LIGHT_POSITION[1], this.LIGHT_POSITION[2]]); break;
-            case "LIGHT_POS_Y": this.setLightPosition([this.LIGHT_POSITION[0], value, this.LIGHT_POSITION[2]]); break;
-            case "LIGHT_POS_Z": this.setLightPosition([this.LIGHT_POSITION[0], this.LIGHT_POSITION[1], value]); break;
         }
     }
 

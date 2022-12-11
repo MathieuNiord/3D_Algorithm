@@ -465,6 +465,7 @@ function webGLStart() {
 			var canvas = document.getElementById("WebGL-test");
 
 			canvas.onmousedown = handleMouseDown;
+			canvas.oncontextmenu = handleMouseContextDown;
 			document.onmouseup = handleMouseUp;
 			document.onmousemove = handleMouseMove;
 			canvas.onwheel = handleMouseWheel;

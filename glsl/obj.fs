@@ -19,11 +19,8 @@ uniform vec3 uColor;
 // ==============================================
 void main(void) {
 
-	// The light is a directional light and is not affected by the rotation of the cube
-	vec3 lightPosition = vec3(uRotationMatrix * vec4(uLightPosition, 0.0));
-
 	vec3 o = normalize(-pos3D.xyz); 					// View vector
-	vec3 i = normalize(lightPosition - pos3D.xyz); 	// Incident vector
+	vec3 i = normalize(uLightPosition - pos3D.xyz); 	// Incident vector
 	vec3 n = normalize(N); 							// Normal vector of the surface
 
 	vec3 reflectDirection = mat3(uRotationMatrix) * reflect(-o, n);
@@ -62,7 +59,7 @@ void main(void) {
 			float D = exp(-(tan_theta2) / (sigma2)) / (PI * (sigma2) * (cos_theta4));
 
 			vec4 fs = (F * D * G) / (4.0 * dot(i, n) * dot(o, n)) * vec4(1.0, 1.0, 1.0, 1.0);
-			gl_FragColor = (fs + (vec4(uColor, 1.0) / PI)) * dot(n, i);
+			gl_FragColor = (fs + (vec4(uColor, 1.0))) * dot(n, i);
 		}
 		
 		else {

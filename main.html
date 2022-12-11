@@ -47,8 +47,9 @@
 					- A checkbox to toggle the plane display
 					- A selector to choose the 3D Model to display on the canvas
 					- A color picker to choose the color of .obj models
-					- A selector to choose the kind of texture the user need [None, Reflection, Transmission, Reflection & Transmission]
+					- A selector to choose the kind of texture the user need [None, Reflection, Transmission, Reflection & Transmission, Cook-Torrance]
 					- If the transmission mode is enabled, then display a range slider to change the value of nI coefficient (Fresnel)
+					- If the Cook-Torrance mode is enabled, then display a range slider to change the value of sigma coefficient too
 				-->
 				<div class="dropdown">
 					<div class="header" onclick="toggleDropdown(event);">
@@ -114,24 +115,6 @@
 								<label for="sigma_select">Sigma:</label>
 								<input type="range" id="sigma_range_select" name="sigma_select" min="0.01" max="0.5" step="0.01">
 								<span id="sigma_value" class="value_display"></span>
-							</div>
-						</item>
-						<!-- Sliders x, y and z for light position -->
-						<item>
-							<div class="row">
-								<label for="light_x">X:</label>
-								<input type="range" id="light_x" name="light_x" min="-10.0" max="10.0" step="0.1">
-								<span id="light_x_value" class="value_display"></span>
-							</div>
-							<div class="row">
-								<label for="light_y">Y:</label>
-								<input type="range" id="light_y" name="light_y" min="-10.0" max="10.0" step="0.1">
-								<span id="light_y_value" class="value_display"></span>
-							</div>
-							<div class="row">
-								<label for="light_z">Z:</label>
-								<input type="range" id="light_z" name="light_z" min="-10.0" max="10.0" step="0.1">
-								<span id="light_z_value" class="value_display"></span>
 							</div>
 						</item>
 					</div>

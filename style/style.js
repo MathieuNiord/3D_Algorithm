@@ -194,19 +194,4 @@ function initUI() {
     sigmaValue.innerText = CONTROLLER.SIGMA;
     sigmaSlider.addEventListener('input', (input) => updateValue(input, 'SIGMA'));
 
-    // Reset slider and bind it to the light position value
-
-    // X
-    lightPosSliderX.value = CONTROLLER.LIGHT_POSITION[0];
-    lightPosValueX.innerText = CONTROLLER.LIGHT_POSITION[0];
-    lightPosSliderX.addEventListener('input', (input) => updateValue(input, 'LIGHT_POS_X'));
-    // Y
-    lightPosSliderY.value = CONTROLLER.LIGHT_POSITION[1];
-    lightPosValueY.innerText = CONTROLLER.LIGHT_POSITION[1];
-    lightPosSliderY.addEventListener('input', (input) => updateValue(input, 'LIGHT_POS_Y'));
-    // Z
-    lightPosSliderZ.value = CONTROLLER.LIGHT_POSITION[2];
-    lightPosValueZ.innerText = CONTROLLER.LIGHT_POSITION[2];
-    lightPosSliderZ.addEventListener('input', (input) => updateValue(input, 'LIGHT_POS_Z'));
-
 }
