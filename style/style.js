@@ -8,23 +8,18 @@ var dropdowns = doc.getElementsByClassName('dropdown');
 // Selectors / Mutators
 var selects = doc.getElementsByClassName('selector');
 var planeToggle = doc.getElementById('plane_checkbox');
-var colorPicker = doc.getElementById('color_picker');
+var modelColorPicker = doc.getElementById('model_color');
+var lightColorPicker = doc.getElementById('light_color');
 var skyboxCheckBox = doc.getElementById('skybox_checkbox');
 
 // Sliders
 // ==========================================================
 var fresnelSlider = doc.getElementById('fresnel_coeff');
 var fresnelValue = doc.getElementById('fresnel_coeff_value');
-
 var sigmaSlider = doc.getElementById('sigma_range_select');
 var sigmaValue = doc.getElementById('sigma_value');
-
-var lightPosSliderX = doc.getElementById('light_x');
-var lightPosValueX = doc.getElementById('light_x_value');
-var lightPosSliderY = doc.getElementById('light_y');
-var lightPosValueY = doc.getElementById('light_y_value');
-var lightPosSliderZ = doc.getElementById('light_z');
-var lightPosValueZ = doc.getElementById('light_z_value');
+var intensitySlider = doc.getElementById('intensity_range_select');
+var intensityValue = doc.getElementById('intensity_value');
 // ==========================================================
 
 // Gallery
@@ -164,8 +159,9 @@ function initUI() {
         });
     }
 
-    // Reset color picker to default value
-    colorPicker.value = rgbToHex(CONTROLLER.COLOR);
+    // Reset color pickers to default value
+    modelColorPicker.value = rgbToHex(CONTROLLER.COLOR);
+    lightColorPicker.value = rgbToHex(CONTROLLER.LIGHT_COLOR);
     
     // Reset select menus
     for (var i = 0; i < selects.length; i++) {
@@ -193,5 +189,10 @@ function initUI() {
     sigmaSlider.value = CONTROLLER.SIGMA;
     sigmaValue.innerText = CONTROLLER.SIGMA;
     sigmaSlider.addEventListener('input', (input) => updateValue(input, 'SIGMA'));
+
+    // Reset slider and bind it to the intensity of the light
+    intensitySlider.value = CONTROLLER.LIGHT_INTENSITY;
+    intensityValue.innerText = CONTROLLER.LIGHT_INTENSITY;
+    intensitySlider.addEventListener('input', (input) => updateValue(input, 'INTENSITY'));
 
 }

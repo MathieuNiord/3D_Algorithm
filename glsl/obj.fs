@@ -13,8 +13,14 @@ uniform float uFresnelIndice;
 uniform float uSigma;
 
 uniform vec3 uLightPosition;
+uniform vec3 uLightColor;
+uniform float uLightIntensity;
 
 uniform vec3 uColor;
+
+float ddot(vec3 a, vec3 b) {
+	return max(0.0,dot(a, b));
+}
 
 // ==============================================
 void main(void) {
@@ -27,10 +33,10 @@ void main(void) {
 	vec3 transmissionDirection = mat3(uRotationMatrix) * refract(-o, n, 1.0 / uFresnelIndice);
 
 	// Mirror + Transmission
-	if (uIsMirroring && uIsTransmitting) {		
+	if(uIsMirroring && uIsTransmitting) {		
 
 		// Formula application (cf. lesson - slide 33)
-		float c = dot(o, n);
+		float c = ddot(o, n);
 		float g = sqrt((uFresnelIndice * uFresnelIndice) + (c * c) - 1.0);
 
 		// Left and right side of the formula
@@ -39,27 +45,29 @@ void main(void) {
 
 		float F = left * right; // Fresnel factor
 
-		if (uIsCookTorrance) {
+		if(uIsCookTorrance) {
 
 			float PI = 3.1415926535897932384626433832795;
 
 			// Normal for a facet
 			vec3 m = normalize(i + o); // half vector
-			
-			float cos_theta = abs(dot(m, n)); // angle between m and n
-			float tan_theta = (1.0 - cos_theta * cos_theta) / (cos_theta * cos_theta);
 
-			float tan_theta2 = tan_theta * tan_theta; // tan_theta^2
+			float cos_theta = ddot(m, n); // angle between m and n
+			float tan_theta2 = (1.0 - cos_theta * cos_theta) / (cos_theta * cos_theta);
+
 			float sigma2 = uSigma * uSigma; // sigma^2
 			float cos_theta4 = cos_theta * cos_theta * cos_theta * cos_theta; // cos_theta^4
 
 			// Geometry term of mask-shadowing
-			float G = min(1.0, min(2.0 * (cos_theta * dot(n, o) / dot(o, m)), 2.0 * (cos_theta * dot(n, i) / dot(o, m))));
+			float G = min(1.0, min(2.0 * (cos_theta * ddot(n, o) / ddot(o, m)), 2.0 * (cos_theta * ddot(n, i) / ddot(i, m))));
+			
 			// Distribution term of normal distribution
-			float D = exp(-(tan_theta2) / (sigma2)) / (PI * (sigma2) * (cos_theta4));
+			float D = exp(-(tan_theta2) / (2.0 * sigma2)) / (PI * (sigma2) * (cos_theta4));
 
-			vec4 fs = (F * D * G) / (4.0 * dot(i, n) * dot(o, n)) * vec4(1.0, 1.0, 1.0, 1.0);
-			gl_FragColor = (fs + (vec4(uColor, 1.0))) * dot(n, i);
+			vec3 fr = ((1.0 - F) * uColor / PI) + ((F * D * G) / (4.0 * ddot(i, n) * ddot(o, n)));
+
+			// Li * fr * cos_theta
+			gl_FragColor = vec4(uLightColor * fr * ddot(n, i), 1.0);
 		}
 		
 		else {
@@ -72,15 +80,15 @@ void main(void) {
 	}
 
 	// Perfect mirror
-	else if (uIsMirroring)
+	else if(uIsMirroring)
 		gl_FragColor = textureCube(uSampler, reflectDirection.xzy);
 
 	// Transmission
-	else if (uIsTransmitting)
+	else if(uIsTransmitting)
 		gl_FragColor = textureCube(uSampler, transmissionDirection.xzy);
-	
+
 	else {
-		vec3 col = vec3(uColor.xyz) * dot(N, normalize(vec3(-pos3D)));
+		vec3 col = vec3(uColor.xyz) * ddot(N, normalize(vec3(-pos3D)));
 		gl_FragColor = vec4(col, 1.0);
 	}
 }

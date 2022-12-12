@@ -194,7 +194,7 @@ Used as indicator in headers when opening/closing dropdowns */
 }
 
 /* The color picker that is used to change color of models */
-#color_picker {
+.color_picker {
     position: absolute;
     right: 5%;
     height: 25px;

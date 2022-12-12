@@ -84,6 +84,8 @@ class objmesh {
 		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
 		this.shader.uSigmaUniform = gl.getUniformLocation(this.shader, "uSigma");
 		this.shader.uLightPositionUniform = gl.getUniformLocation(this.shader, "uLightPosition");
+		this.shader.uLightColorUniform = gl.getUniformLocation(this.shader, "uLightColor");
+		this.shader.uLightIntensityUniform = gl.getUniformLocation(this.shader, "uLightIntensity");
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
 		gl.uniform1i(this.shader.uMirrorUniform, CONTROLLER.isMirroring && CONTROLLER.isThereSkybox);
@@ -92,6 +94,8 @@ class objmesh {
 		gl.uniform1f(this.shader.uFresnelIndiceUniform, CONTROLLER.FRESNEL_INDICE);
 		gl.uniform1f(this.shader.uSigmaUniform, CONTROLLER.SIGMA);
 		gl.uniform3fv(this.shader.uLightPositionUniform, CONTROLLER.LIGHT_POSITION);
+		gl.uniform3fv(this.shader.uLightColorUniform, CONTROLLER.LIGHT_COLOR);
+		gl.uniform1f(this.shader.uLightIntensityUniform, CONTROLLER.LIGHT_INTENSITY);
 	}
 
 	// --------------------------------------------
