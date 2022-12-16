@@ -1,3 +1,6 @@
+/*  Authors: Frejoux Gaetan
+    & Niord Mathieu */
+
 const Colors = {
     "black": [0, 0, 0],
     "white": [1.0, 1.0, 1.0],

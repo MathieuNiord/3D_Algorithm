@@ -1,3 +1,6 @@
+/*  Authors: Frejoux Gaetan
+    & Niord Mathieu */
+
 const DEFAULT_SCENE = 'yokohama';
 const DEFAULT_COLOR = [0.8, 0.4, 0.4];
 

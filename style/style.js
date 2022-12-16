@@ -1,3 +1,6 @@
+/*  Authors: Frejoux Gaetan
+    & Niord Mathieu */
+
 var doc = document;
 
 var openMenuBtn = doc.getElementById('open_menu_btn');
