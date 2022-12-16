@@ -84,20 +84,11 @@
 							<div class="row">
 								<label for="texture_select">Texture:</label>
 								<select id="texture_select" name="Textures" class="selector" onclick="showFresnelAndSigma();">
-									<option value="0" onclick="
-										CONTROLLER.isMirroring
-										= CONTROLLER.isTransmitting
-										= CONTROLLER.isCookTorrance
-										= false;
-									" selected>None</option>
+									<option value="0" onclick="CONTROLLER.isMirroring = CONTROLLER.isTransmitting = CONTROLLER.isCookTorrance = false;" selected>None</option>
 									<option onclick="CONTROLLER.isMirroring = true; CONTROLLER.isTransmitting = CONTROLLER.isCookTorrance = false;">Perfect Mirror</option>
 									<option onclick="CONTROLLER.isTransmitting = true; CONTROLLER.isMirroring = CONTROLLER.isCookTorrance = false;">Transmission</option>
 									<option onclick="CONTROLLER.isTransmitting = CONTROLLER.isMirroring = true; CONTROLLER.isCookTorrance = false;">M + T</option>
-									<option onclick="
-										CONTROLLER.isTransmitting =
-										CONTROLLER.isMirroring =
-										CONTROLLER.isCookTorrance = true;
-									">Cook-Torrance</option>
+									<option onclick="CONTROLLER.isTransmitting = CONTROLLER.isMirroring = false; CONTROLLER.isCookTorrance = true;">Cook-Torrance</option>
 								</select>
 							</div>
 						</item>

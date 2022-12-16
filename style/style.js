@@ -93,7 +93,7 @@ function closeMenu() {
 function showFresnelAndSigma() {
     var fresnel = document.getElementById('fresnel');
     var sigma = document.getElementById('sigma');
-    fresnel.style.display = CONTROLLER.isTransmitting ? 'block' : 'none';
+    fresnel.style.display = CONTROLLER.isTransmitting || CONTROLLER.isCookTorrance ? 'block' : 'none';
     sigma.style.display = CONTROLLER.isCookTorrance ? 'block' : 'none';
 }
 

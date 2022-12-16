@@ -79,4 +79,4 @@ Un menu apparaît en haut à droite de la fenêtre, il vous permettra de :
 | **Clic gauche** + **Mouvements souris** | Rotation de la caméra autour du modèle |
 | **Clic droit simple** | Changement d'objet |
 | **Mouse Wheel** ou **Shift + Clic gauche** | Zoom |
-| **Cook & Torrance actif** + **Mouvements souris** | Déplacement de la source de lumière |
+| **Cook & Torrance actif** + **Ctrl + Mouvements souris** | Déplacement de la source de lumière |

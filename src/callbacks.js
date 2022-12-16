@@ -3,8 +3,7 @@
 // Mouse management
 // =====================================================
 var mouseDown = false;
-var lastMouseX = null;
-var lastMouseY = null;
+var lastMouseX, lastMouseY = null;
 var rotY = 0;
 var rotX = -1;
 
@@ -45,13 +44,6 @@ function handleMouseDown(event) {
 	lastMouseY = event.clientY;
 }
 
-
-// =====================================================
-function handleMouseContextDown(event) {
-	lastMouseX = event.clientX;
-	lastMouseY = event.clientY;
-}
-
 // =====================================================
 function handleMouseUp(event) { mouseDown = false; }
 
@@ -88,7 +80,7 @@ function handleMouseMove(event) {
 	var deltaY = newY - lastMouseY;
 
 	// Update the light position if the user is moving his cursor on the canvas
-	if (!mouseDown && CONTROLLER.isCookTorrance) {
+	if (!mouseDown && CONTROLLER.isCookTorrance && event.ctrlKey) {
 		CONTROLLER.LIGHT_POSITION[0] += deltaX / 100.0;
 		CONTROLLER.LIGHT_POSITION[1] -= deltaY / 100.0;
 	}
@@ -96,9 +88,6 @@ function handleMouseMove(event) {
 	/* Update the camera position if the user is moving his cursor
 	on the canvas and the left mouse button is held down */
 	else if (mouseDown) {
-
-		// Reset the light position if the user is moving the camera
-		CONTROLLER.LIGHT_POSITION = [0, 0, 0];
 
 		if (event.shiftKey) distCENTER[2] += deltaY / 100.0;
 		else {
