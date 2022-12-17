@@ -1,5 +1,4 @@
-/*  Authors: Frejoux Gaetan
-    & Niord Mathieu */
+/** @author Frejoux Gaetan, Niord Mathieu */
 
 var doc = document;
 
@@ -23,6 +22,11 @@ var sigmaSlider = doc.getElementById('sigma_range_select');
 var sigmaValue = doc.getElementById('sigma_value');
 var intensitySlider = doc.getElementById('intensity_range_select');
 var intensityValue = doc.getElementById('intensity_value');
+const controllerConfigUpdaters = [
+    { slider: fresnelSlider, value: fresnelValue, target: 'FRESNEL' },
+    { slider: sigmaSlider, value: sigmaValue, target: 'SIGMA' },
+    { slider: intensitySlider, value: intensityValue, target: 'INTENSITY' }
+];
 // ==========================================================
 
 // Gallery
@@ -183,19 +187,13 @@ function initUI() {
         CONTROLLER.isThereSkybox = this.checked;
     });
 
-    // Reset slider and bind it to the fresnel value
-    fresnelSlider.value = CONTROLLER.FRESNEL_INDICE;
-    fresnelValue.innerText = CONTROLLER.FRESNEL_INDICE;
-    fresnelSlider.addEventListener('input', (input) => updateValue(input, 'FRESNEL'));
+    // Reset sliders and bind them to their target value
+    controllerConfigUpdaters.forEach(function (config) {
+        config.slider.value
+        = config.value.innerText
+        = CONTROLLER.getValue(config.target);
+        config.slider.addEventListener('input', (input) => updateValue(input, config.target));
+    });
 
-    // Reset slider and bind it to the sigma value
-    sigmaSlider.value = CONTROLLER.SIGMA;
-    sigmaValue.innerText = CONTROLLER.SIGMA;
-    sigmaSlider.addEventListener('input', (input) => updateValue(input, 'SIGMA'));
-
-    // Reset slider and bind it to the intensity of the light
-    intensitySlider.value = CONTROLLER.LIGHT_INTENSITY;
-    intensityValue.innerText = CONTROLLER.LIGHT_INTENSITY;
-    intensitySlider.addEventListener('input', (input) => updateValue(input, 'INTENSITY'));
-
+    openMenu(); // Open the menu by default
 }
