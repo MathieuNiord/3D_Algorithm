@@ -22,10 +22,10 @@ var sigmaSlider = doc.getElementById('sigma_range_select');
 var sigmaValue = doc.getElementById('sigma_value');
 var intensitySlider = doc.getElementById('intensity_range_select');
 var intensityValue = doc.getElementById('intensity_value');
-const controllerConfigUpdaters = [
-    { slider: fresnelSlider, value: fresnelValue, target: 'FRESNEL' },
-    { slider: sigmaSlider, value: sigmaValue, target: 'SIGMA' },
-    { slider: intensitySlider, value: intensityValue, target: 'INTENSITY' }
+const controllerUpdatersConfig = [
+    { slider: fresnelSlider,    numberInput: fresnelValue,    target: 'FRESNEL'   },
+    { slider: sigmaSlider,      numberInput: sigmaValue,      target: 'SIGMA'     },
+    { slider: intensitySlider,  numberInput: intensityValue,  target: 'INTENSITY' }
 ];
 // ==========================================================
 
@@ -65,18 +65,37 @@ function toggleDropdown(evt) {
 }
 
 /**
- * Update a value from an input range (UI and shaders)
+ * Update the value of the slider and the number input
+ * @param {HTMLInputElement} slider - The slider
+ * @param {HTMLInputElement} numberInput - The number input
+ * @param {String} target - The target of the controller to update 
  */
-function updateValue(input, target) {
-    let slider = input.target;
+function updateSliderValue(slider, numberInput, target) {
     let value = slider.value;
-    // Get nearest span of class value_display
-    let valueDisplay = slider.nextElementSibling;
-    // Update the value of the span
-    valueDisplay.innerHTML = value;
-    // Update the value of the shader
+    numberInput.value = value;
     CONTROLLER.updateValue(target, value);
 }
+
+/**
+ * Update the value of the number input and the slider
+ * @param {HTMLInputElement} numberInput - The number input
+ * @param {HTMLInputElement} slider - The slider
+ * @param {String} target - The target of the controller to update
+ */
+function updateNumberInputValue(numberInput, slider, target) {
+    let value = parseFloat(numberInput.value); // Get the value from the number input
+    if (isNaN(value)) return; // If the value is not a number (empty case), then return
+    // Clamp the value between the min and max values
+    value = Math.min(
+        Math.max(value, CONTROLLER.getMinValue(target)),
+        CONTROLLER.getMaxValue(target)
+    );
+    // Update the value of the slider and the number input (to clamp the value)
+    numberInput.value = value;
+    slider.value = value;
+    CONTROLLER.updateValue(target, value);
+}
+
 
 /**
  * Open the Menu
@@ -188,11 +207,18 @@ function initUI() {
     });
 
     // Reset sliders and bind them to their target value
-    controllerConfigUpdaters.forEach(function (config) {
+    controllerUpdatersConfig.forEach(function (config) {
         config.slider.value
-        = config.value.innerText
+        = config.numberInput.value
         = CONTROLLER.getValue(config.target);
-        config.slider.addEventListener('input', (input) => updateValue(input, config.target));
+        config.slider.addEventListener('input', (input) => updateSliderValue(input.target, config.numberInput, config.target));
+        config.numberInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') 
+                updateNumberInputValue(
+                    event.target, 
+                    config.slider, 
+                    config.target);
+        });
     });
 
     openMenu(); // Open the menu by default
