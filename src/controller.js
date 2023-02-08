@@ -11,16 +11,7 @@ const FRESNEL_INDICES = {
 }
 
 const DEFAULT_SCENE = 'yokohama';
-const DEFAULT_OBJ_COLOR = [0.8, 0.4, 0.4];
-
-// Light
-const DEFAULT_LIGHT = {
-    pos: [ 0.0, 0.0, 0.0 ],
-    color: [ 1.0, 1.0, 1.0 ],
-    minIntensity: 0.0,
-    maxIntensity: 50.0,
-    defaultIntensity: 4.0
-};
+const DEFAULT_OBJ_COLOR = [0.0, 0.0, 0.0];
 
 // Fresnel
 const DEFAULT_FRESNEL = {
@@ -46,10 +37,12 @@ class controller {
         this.OBJECT             = null;
         this.COLOR              = DEFAULT_OBJ_COLOR;
         this.SCENE              = DEFAULT_SCENE;
+        this.isThereSkybox      = true;
         this.FRESNEL_INDICE     = DEFAULT_FRESNEL.default;
         this.SIGMA              = DEFAULT_SIGMA.default;
         this.SAMPLES_NUMBER     = DEFAULT_SAMPLES.default;
-        this.isJalon3           = false;
+        this.LIGHT_INTENSITY    = 5.0;
+        this.isSampling         = false;
     }
 
     // Environment
@@ -71,8 +64,8 @@ class controller {
     }
 
     // Configurations
-    setDefault() { this.isJalon3 = false; }
-    setJalon3() { this.isJalon3 = true; }
+    setDefault() { this.isSampling = false; }
+    setSampling() { this.isSampling = true; }
 
     // Options
 
@@ -97,6 +90,7 @@ class controller {
             case "SIGMA": this.setSigma(value); break;
             case "SAMPLES": this.setSamplesNumber(value); break;
         }
+        console.log("Update " + target + " to " + value)
     }
 
     getValue(target) {

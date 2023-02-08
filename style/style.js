@@ -122,7 +122,7 @@ function showSliders() {
     fresnel.style.display =
     sigma.style.display =
     N.style.display =
-    (CONTROLLER.isJalon3 ? 'block' : 'none');
+    (CONTROLLER.isSampling ? 'block' : 'none');
 }
 
 /**

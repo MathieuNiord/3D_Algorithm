@@ -80,7 +80,7 @@
 								<label for="texture_select">Texture:</label>
 								<select id="texture_select" name="Textures" class="selector" onclick="showSliders();">
 									<option value="0" onclick="CONTROLLER.setDefault();" selected>None</option>
-									<option onclick="CONTROLLER.setJalon3();">Echantillonage</option>	
+									<option onclick="CONTROLLER.setSampling();">Echantillonage</option>	
 								</select>
 							</div>
 						</item>
@@ -96,7 +96,7 @@
 						<item id="sigma" style="display: none;">
 							<div class="row">
 								<label for="sigma_select">sigma:</label>
-								<input type="range" id="sigma_range_select" name="sigma_select" min="0.01" max="0.5" step="0.01">
+								<input type="range" id="sigma_range_select" name="sigma_select" min="0.0001" max="0.5" step="0.01">
 								<input type="text" id="sigma_value" class="value_display"/>
 							</div>
 						</item>

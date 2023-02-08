@@ -76,26 +76,22 @@ class objmesh {
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
 		this.shader.uRotationMatrixUniform = gl.getUniformLocation(this.shader, "uRotationMatrix");
 
-		// Settting mirroring
+		// Settting
 		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
-		this.shader.uMirrorUniform = gl.getUniformLocation(this.shader, "uIsMirroring");
-		this.shader.uTransmitUniform = gl.getUniformLocation(this.shader, "uIsTransmitting");
-		this.shader.uCookTorrance = gl.getUniformLocation(this.shader, "uIsCookTorrance");
-		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
+		this.shader.uIsSamplingUniform = gl.getUniformLocation(this.shader, "uIsSampling");
 		this.shader.uSigmaUniform = gl.getUniformLocation(this.shader, "uSigma");
-		this.shader.uLightPositionUniform = gl.getUniformLocation(this.shader, "uLightPosition");
-		this.shader.uLightColorUniform = gl.getUniformLocation(this.shader, "uLightColor");
+		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
+		this.shader.uNbSamplesUniform = gl.getUniformLocation(this.shader, "uNbSamples");
 		this.shader.uLightIntensityUniform = gl.getUniformLocation(this.shader, "uLightIntensity");
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
-		gl.uniform1i(this.shader.uMirrorUniform, CONTROLLER.isMirroring && CONTROLLER.isThereSkybox);
-		gl.uniform1i(this.shader.uTransmitUniform, CONTROLLER.isTransmitting && CONTROLLER.isThereSkybox);
-		gl.uniform1i(this.shader.uCookTorrance, CONTROLLER.isCookTorrance);
 		gl.uniform1f(this.shader.uFresnelIndiceUniform, CONTROLLER.FRESNEL_INDICE);
 		gl.uniform1f(this.shader.uSigmaUniform, CONTROLLER.SIGMA);
-		gl.uniform3fv(this.shader.uLightPositionUniform, CONTROLLER.LIGHT_POSITION);
-		gl.uniform3fv(this.shader.uLightColorUniform, CONTROLLER.LIGHT_COLOR);
+		gl.uniform1i(this.shader.uNbSamplesUniform, CONTROLLER.SAMPLES_NUMBER);
+		
 		gl.uniform1f(this.shader.uLightIntensityUniform, CONTROLLER.LIGHT_INTENSITY);
+	
+		gl.uniform1i(this.shader.uIsSamplingUniform, CONTROLLER.isSampling && CONTROLLER.isThereSkybox);
 	}
 
 	// --------------------------------------------
