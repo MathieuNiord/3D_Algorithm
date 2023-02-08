@@ -72,33 +72,24 @@ function handleMouseContextDown(event) {
 // =====================================================
 function handleMouseMove(event) {
 
-	if (!mouseDown && !CONTROLLER.isCookTorrance) return;
+	if (!mouseDown) return;
 
 	var newX = event.clientX;
 	var newY = event.clientY;
 	var deltaX = newX - lastMouseX;
 	var deltaY = newY - lastMouseY;
 
-	// Update the light position if the user is moving his cursor on the canvas
-	if (!mouseDown && CONTROLLER.isCookTorrance && event.ctrlKey) {
-		CONTROLLER.LIGHT_POSITION[0] += deltaX / 100.0;
-		CONTROLLER.LIGHT_POSITION[1] -= deltaY / 100.0;
-	}
-
 	/* Update the camera position if the user is moving his cursor
 	on the canvas and the left mouse button is held down */
-	else if (mouseDown) {
+	if (event.shiftKey) distCENTER[2] += deltaY / 100.0;
+	else {
 
-		if (event.shiftKey) distCENTER[2] += deltaY / 100.0;
-		else {
+		rotY += degToRad(deltaX / 5);
+		rotX += degToRad(deltaY / 5);
 
-			rotY += degToRad(deltaX / 5);
-			rotX += degToRad(deltaY / 5);
-
-			mat4.identity(rotMatrix);
-			mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
-			mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
-		}
+		mat4.identity(rotMatrix);
+		mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
+		mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
 	}
 
 	lastMouseX = newX

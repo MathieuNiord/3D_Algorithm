@@ -11,7 +11,6 @@ var dropdowns = doc.getElementsByClassName('dropdown');
 var selects = doc.getElementsByClassName('selector');
 var planeToggle = doc.getElementById('plane_checkbox');
 var modelColorPicker = doc.getElementById('model_color');
-var lightColorPicker = doc.getElementById('light_color');
 var skyboxCheckBox = doc.getElementById('skybox_checkbox');
 
 // Sliders
@@ -20,12 +19,12 @@ var fresnelSlider = doc.getElementById('fresnel_coeff');
 var fresnelValue = doc.getElementById('fresnel_coeff_value');
 var sigmaSlider = doc.getElementById('sigma_range_select');
 var sigmaValue = doc.getElementById('sigma_value');
-var intensitySlider = doc.getElementById('intensity_range_select');
-var intensityValue = doc.getElementById('intensity_value');
+var samplingSlider = doc.getElementById('sampling_range_select');
+var samplingValue = doc.getElementById('sampling_value');
 const controllerUpdatersConfig = [
     { slider: fresnelSlider,    numberInput: fresnelValue,    target: 'FRESNEL'   },
     { slider: sigmaSlider,      numberInput: sigmaValue,      target: 'SIGMA'     },
-    { slider: intensitySlider,  numberInput: intensityValue,  target: 'INTENSITY' }
+    { slider: samplingSlider,   numberInput: samplingValue,   target: 'SAMPLES'   }
 ];
 // ==========================================================
 
@@ -116,11 +115,14 @@ function closeMenu() {
 /**
  * Show the Fresnel and Sigma part
  */
-function showFresnelAndSigma() {
-    var fresnel = document.getElementById('fresnel');
-    var sigma = document.getElementById('sigma');
-    fresnel.style.display = CONTROLLER.isTransmitting || CONTROLLER.isCookTorrance ? 'block' : 'none';
-    sigma.style.display = CONTROLLER.isCookTorrance ? 'block' : 'none';
+function showSliders() {
+    var fresnel = doc.getElementById('fresnel');
+    var sigma = doc.getElementById('sigma');
+    var N = doc.getElementById('N');
+    fresnel.style.display =
+    sigma.style.display =
+    N.style.display =
+    (CONTROLLER.isJalon3 ? 'block' : 'none');
 }
 
 /**
@@ -187,7 +189,6 @@ function initUI() {
 
     // Reset color pickers to default value
     modelColorPicker.value = rgbToHex(CONTROLLER.COLOR);
-    lightColorPicker.value = rgbToHex(CONTROLLER.LIGHT_COLOR);
     
     // Reset select menus
     for (var i = 0; i < selects.length; i++) {

@@ -34,23 +34,25 @@ const DEFAULT_SIGMA = {
     default: 0.5
 };
 
+// Samples
+const DEFAULT_SAMPLES = {
+    min: 1, max: 100,
+    default: 1
+};
+
 class controller {
 
     constructor() {
         this.OBJECT             = null;
         this.COLOR              = DEFAULT_OBJ_COLOR;
         this.SCENE              = DEFAULT_SCENE;
-        this.LIGHT_POSITION     = DEFAULT_LIGHT.pos;
-        this.LIGHT_COLOR        = DEFAULT_LIGHT.color;
-        this.LIGHT_INTENSITY    = DEFAULT_LIGHT.defaultIntensity;
         this.FRESNEL_INDICE     = DEFAULT_FRESNEL.default;
         this.SIGMA              = DEFAULT_SIGMA.default;
-        this.isTherePlane       = false;
-        this.isThereSkybox      = true;
-        this.isMirroring        = false;
-        this.isTransmitting     = false;
-        this.isCookTorrance     = false;
+        this.SAMPLES_NUMBER     = DEFAULT_SAMPLES.default;
+        this.isJalon3           = false;
     }
+
+    // Environment
 
     setObject(object) {
         this.OBJECT =
@@ -68,21 +70,11 @@ class controller {
             (newColor !== this.COLOR) ? newColor : this.COLOR;
     }
 
-    setLightPosition(position) {
-        this.LIGHT_POSITION =
-            (position !== this.LIGHT_POSITION) ? position : this.LIGHT_POSITION;
-    }
+    // Configurations
+    setDefault() { this.isJalon3 = false; }
+    setJalon3() { this.isJalon3 = true; }
 
-    setLightColor(color) {
-        let newColor = hexToRgb(color);
-        this.LIGHT_COLOR =
-            (newColor !== this.LIGHT_COLOR) ? newColor : this.LIGHT_COLOR;
-    }
-
-    setLightIntensity(intensity) {
-        this.LIGHT_INTENSITY =
-            (intensity >= DEFAULT_LIGHT.minIntensity && intensity <= DEFAULT_LIGHT.maxIntensity) ? intensity : this.LIGHT_INTENSITY;
-    }
+    // Options
 
     setFresnel(fresnel) {
         this.FRESNEL_INDICE =
@@ -93,12 +85,17 @@ class controller {
         this.SIGMA =
             (sigma >= DEFAULT_SIGMA.min && sigma <= DEFAULT_SIGMA.max) ? sigma : this.SIGMA;
     }
+    
+    setSamplesNumber(nbSamples) {
+        this.SAMPLES_NUMBER =
+            (nbSamples >= DEFAULT_SAMPLES.min && nbSamples <= DEFAULT_SAMPLES.max) ? nbSamples : this.SAMPLES_NUMBER;
+    }
 
     updateValue(target, value) {
         switch (target) {
             case "FRESNEL": this.setFresnel(value); break;
             case "SIGMA": this.setSigma(value); break;
-            case "INTENSITY": this.setLightIntensity(value); break;
+            case "SAMPLES": this.setSamplesNumber(value); break;
         }
     }
 
@@ -106,7 +103,7 @@ class controller {
         switch (target) {
             case "FRESNEL": return this.FRESNEL_INDICE;
             case "SIGMA": return this.SIGMA;
-            case "INTENSITY": return this.LIGHT_INTENSITY;
+            case "SAMPLES": return this.SAMPLES_NUMBER;
         }
     }
 
@@ -114,7 +111,7 @@ class controller {
         switch (target) {
             case "FRESNEL": return DEFAULT_FRESNEL.min;
             case "SIGMA": return DEFAULT_SIGMA.min;
-            case "INTENSITY": return DEFAULT_LIGHT.minIntensity;
+            case "SAMPLES": return DEFAULT_SAMPLES.min;
         }
     }
 
@@ -122,7 +119,7 @@ class controller {
         switch (target) {
             case "FRESNEL": return DEFAULT_FRESNEL.max;
             case "SIGMA": return DEFAULT_SIGMA.max;
-            case "INTENSITY": return DEFAULT_LIGHT.maxIntensity;
+            case "SAMPLES": return DEFAULT_SAMPLES.max;
         }
     }
 

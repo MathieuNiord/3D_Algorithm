@@ -20,13 +20,6 @@
 
 <body onload="webGLStart(); initUI();">
 
-	<!--<header>
-		<img src="res/favicon.ico" width="48" height="48" alt="Logo" />	
-		<div class="brand">
-			<a href="#">A3D 2</a>
-		</div>
-	</header>-->
-
 	<div id="main_content">
 
 		<canvas id="WebGL-test" style="border:none;" width="2180" height="1080"></canvas>
@@ -47,9 +40,11 @@
 					- A checkbox to toggle the plane display
 					- A selector to choose the 3D Model to display on the canvas
 					- A color picker to choose the color of .obj models
-					- A selector to choose the kind of texture the user need [None, Reflection, Transmission, Reflection & Transmission, Cook-Torrance]
-					- If the transmission mode is enabled, then display a range slider to change the value of nI coefficient (Fresnel)
-					- If the Cook-Torrance mode is enabled, then display a range slider to change the value of sigma coefficient too
+					- A selector to choose the kind of texture the user need [None or Echantillonage]
+					- If the Sampling is enabled, then display:
+						- a range slider to change the value of sigma coefficient;
+						- a range slider to change the value of nI coefficient;
+						- a range slider to change the value of N coefficient;
 				-->
 				<div class="dropdown active">
 					<div class="header" onclick="toggleDropdown(event);">
@@ -83,38 +78,34 @@
 						<item>
 							<div class="row">
 								<label for="texture_select">Texture:</label>
-								<select id="texture_select" name="Textures" class="selector" onclick="showFresnelAndSigma();">
-									<option value="0" onclick="CONTROLLER.isMirroring = CONTROLLER.isTransmitting = CONTROLLER.isCookTorrance = false;" selected>None</option>
-									<option onclick="CONTROLLER.isMirroring = true; CONTROLLER.isTransmitting = CONTROLLER.isCookTorrance = false;">Perfect Mirror</option>
-									<option onclick="CONTROLLER.isTransmitting = true; CONTROLLER.isMirroring = CONTROLLER.isCookTorrance = false;">Transmission</option>
-									<option onclick="CONTROLLER.isTransmitting = CONTROLLER.isMirroring = true; CONTROLLER.isCookTorrance = false;">M + T</option>
-									<option onclick="CONTROLLER.isTransmitting = CONTROLLER.isMirroring = false; CONTROLLER.isCookTorrance = true;">Cook-Torrance</option>
+								<select id="texture_select" name="Textures" class="selector" onclick="showSliders();">
+									<option value="0" onclick="CONTROLLER.setDefault();" selected>None</option>
+									<option onclick="CONTROLLER.setJalon3();">Echantillonage</option>	
 								</select>
 							</div>
 						</item>
 						<!-- Fresnel slider input -->
-						<item>
-							<div class="row" id="fresnel" style="display: none;">
+						<item id="fresnel" style="display: none;">
+							<div class="row">
 								<label for="fresnel_coeff">nI:</label>
 								<input type="range" id="fresnel_coeff" name="fresnel_coeff" min="1.0" max="2.0" step="0.01">
 								<input type="text" id="fresnel_coeff_value" class="value_display"/>
 							</div>
 						</item>
-						<!-- Sigma (Cook-Torrance) slider input -->
+						<!-- Sigma slider input -->
 						<item id="sigma" style="display: none;">
 							<div class="row">
 								<label for="sigma_select">sigma:</label>
 								<input type="range" id="sigma_range_select" name="sigma_select" min="0.01" max="0.5" step="0.01">
 								<input type="text" id="sigma_value" class="value_display"/>
 							</div>
+						</item>
+						<!-- Number of samples slider input -->
+						<item id="N" style="display: none;">
 							<div class="row">
-								<label for="color">Specular color:</label>
-								<input type="color" class="color_picker" id="light_color" name="color" value="#000000" oninput="CONTROLLER.setLightColor(this.value);">
-							</div>
-							<div class="row">
-								<label for="intensity_select">Light:</label>
-								<input type="range" id="intensity_range_select" name="intensity_select" min="0.0" max="50" step="0.1">
-								<input type="text" id="intensity_value" class="value_display"/>
+								<label for="samples_select">N:</label>
+								<input type="range" id="sampling_range_select" name="sampling_select" min="1" max="100" step="1">
+								<input type="text" id="sampling_value" class="value_display"/>
 							</div>
 						</item>
 					</div>
@@ -129,7 +120,7 @@
 						<span class="caret down"></span>
 						Skybox
 					</div>
-					<input type="checkbox" id="skybox_checkbox" name="scene" onclick="isThereSkybox = this.checked;">
+					<input type="checkbox" id="skybox_checkbox" name="scene">
 					<div class="content__wrapper">
 						<!-- Skybox textures gallery -->
 						<item>
@@ -144,12 +135,6 @@
 		</div>
 
 	</div>
-
-	<!--<footer>This project was developed by 
-		<a href="mailto:gaetan.frejoux@etu.univ-poitiers.fr" style="color: white; text-decoration: none;">Frejoux Gaetan</a>
-		&
-		<a href="mailto:mathieu.niord@etu.univ-poitiers.fr" style="color: white; text-decoration: none;">Niord Mathieu</a>
-	</footer>-->
 
 </body>
 

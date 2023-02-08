@@ -7,13 +7,12 @@ uniform samplerCube uSampler;
 uniform mat4 uRotationMatrix;
 
 // Modes
-uniform bool uIsMirroring;
-uniform bool uIsTransmitting;
-uniform bool uIsCookTorrance;
+uniform bool uIsSampling;
 
 // Parameters
 uniform float uFresnelIndice;
 uniform float uSigma;
+uniform int uNbSamples;
 
 // Lighting
 uniform vec3 uLightPosition;
