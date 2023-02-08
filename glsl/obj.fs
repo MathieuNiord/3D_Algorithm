@@ -171,7 +171,7 @@ vec3 getSampling(const int nbSamples, vec3 n, vec3 o){
 
     vec3 BRDF = vec3((F * D * G) / (4.0 * IN * ON));
 
-    color += colorFinal * IN / pdf;
+    color += colorFinal * BRDF * IN / pdf;
   }
 
   return (color / float(nbSamples));
