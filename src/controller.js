@@ -10,22 +10,22 @@ const FRESNEL_INDICES = {
 	"STEEL": 2.0,
 }
 
-const DEFAULT_SCENE = 'yokohama';
+const DEFAULT_SCENE = 'museum';
 const DEFAULT_OBJ_COLOR = [0.0, 0.0, 0.0];
 
-// Fresnel
+// Refractive index
 const DEFAULT_FRESNEL = {
     min: 1.0, max: 2.0,
     default: FRESNEL_INDICES.ICE
 };
 
-// Sigma
+// Roughness
 const DEFAULT_SIGMA = {
-    min: 0.0, max: 0.5,
+    min: 0.0001, max: 0.5,
     default: 0.5
 };
 
-// Samples
+// Sampling
 const DEFAULT_SAMPLES = {
     min: 1, max: 100,
     default: 1
@@ -79,7 +79,6 @@ class controller {
     setSampling() {
         this.isSampling = true;
         this.isFrostedMirror = false;
-    
     }
     
     setFrostedMirror() {

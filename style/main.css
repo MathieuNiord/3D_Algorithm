@@ -153,7 +153,7 @@ Used as indicator in headers when opening/closing dropdowns */
     font-size: 14px;
     width: 100%;
 }
-.row:hover {
+.row:hover:not(.slider) {
     background-color: rgb(105, 105, 105, 0.5);
 }
 
@@ -170,8 +170,8 @@ Used as indicator in headers when opening/closing dropdowns */
     transform: translateY(-50%);
 }
 
-/* The plane toggle */
-#plane_checkbox {
+/* Checkboxes toggles */
+.checkbox input[type=checkbox] {
     position: relative;
     left: 85%;
     top: 50%;
@@ -189,7 +189,7 @@ Used as indicator in headers when opening/closing dropdowns */
 
 label {
     position: absolute;
-    left: 5%;
+    left: 1rem;
     top: 50%;
     transform: translateY(-50%);
 }
@@ -234,35 +234,31 @@ label {
 }
 
 /* Sliders */
+.slider {
+    height: 50px;
+}
+.slider label {
+    position: absolute;
+    left: 1rem;
+    top: 5%;
+    transform: translateY(0);
+}
 input[type=range] {
     position: absolute;
-    width: 50%;
-    right: 20%;
-    top: 50%;
+    width: 85%;
+    left: 1rem;
+    top: 70%;
     transform: translateY(-50%);
 }
 .value_display {
     position: absolute;
-    right: 3%;
-    top: 50%;
-    transform: translateY(-50%);
+    right: 1rem;
+    top: 5%;
     background-color: #444444;
     color: white;
     border-radius: 2px;
-    width: 15%;
+    width: 22.5%;
     height: 35%;
     font-size: 14px;
+    text-align: right;
 }
-
-/* Footer style */
-/*footer {
-    overflow:hidden;
-    position:absolute;
-    bottom:0;
-    left:0;
-    height:50p;
-    text-align: center;
-    opacity: 0.33;
-    color: white;
-    background: linear-gradient(180deg, #1d1e22 5%, #152e49 100%);
-}*/

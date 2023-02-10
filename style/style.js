@@ -11,6 +11,7 @@ var dropdowns = doc.getElementsByClassName('dropdown');
 var selects = doc.getElementsByClassName('selector');
 var planeToggle = doc.getElementById('plane_checkbox');
 var modelColorPicker = doc.getElementById('model_color');
+var frostedMirrorModeCheckbox = doc.getElementById('frosted_checkbox');
 var skyboxCheckBox = doc.getElementById('skybox_checkbox');
 
 // Sliders
@@ -123,14 +124,14 @@ function showSliders() {
     var Fresnel = doc.getElementById('fresnel');
     var Sigma = doc.getElementById('sigma');
     var N = doc.getElementById('N');
-    var Intensity = doc.getElementById('light_intensity');
+    var FrostedCheckbox = doc.getElementById('frosted_mirror_checkbox');
 
-    // Setting up the display of the sliders
+    // Setting up the displayable elements
     Fresnel.style.display
         = Sigma.style.display
         = N.style.display
-        = Intensity.style.display
-        = (CONTROLLER.isSampling ? 'block' : 'none');
+        = FrostedCheckbox.style.display
+        = (CONTROLLER.isSampling || CONTROLLER.isFrostedMirror ? 'block' : 'none');
 }
 
 /**
@@ -207,6 +208,13 @@ function initUI() {
     planeToggle.checked = CONTROLLER.isTherePlane;
     planeToggle.addEventListener('change', function () {
         CONTROLLER.isTherePlane = this.checked;
+    });
+
+    // Reset the frosted mirror checkbox
+    frostedMirrorModeCheckbox.checked = CONTROLLER.isFrostedMirror;
+    frostedMirrorModeCheckbox.addEventListener('change', function () {
+        CONTROLLER.isFrostedMirror = this.checked;
+        CONTROLLER.isSampling = !this.checked;
     });
 
     // Reset the skybox checkbox

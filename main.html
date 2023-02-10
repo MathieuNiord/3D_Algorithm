@@ -54,16 +54,16 @@
 					<div class="content__wrapper">
 						<!-- Plane toggle -->
 						<item>
-							<div class="row">
+							<div class="row checkbox">
 								<label for="plane_checkbox">Plane</label>
-								<input type="checkbox" id="plane_checkbox" onclick="isTherePlane = this.checked">
+								<input type="checkbox" id="plane_checkbox" onclick="CONTROLLER.isTherePlane = this.checked">
 							</div>
 						</item>
 						<!-- Model selection -->
 						<item>
 							<div class="row">
 								<label for="models_select">Objects</label>
-								<select id="models_select" name="Objects" class="selector" onload="this.selectedINdex = 0;">
+								<select id="models_select" name="Objects" class="selector" onload="this.selectedIndex = 0;">
 									<option onclick="OBJ1 = null;" selected>None</option>
 								</select>
 							</div>
@@ -72,6 +72,14 @@
 							<div class="row">
 								<label for="color">Colors:</label>
 								<input type="color" class="color_picker" id="model_color" name="color" value="#000000" oninput="CONTROLLER.setColor(this.value);">
+							</div>
+						</item>
+						<!-- Light intensity slider input -->
+						<item id="light_intensity">
+							<div class="row slider">
+								<label for="light_intensity">Light intensity</label>
+								<input type="range" id="intensity_range_select" name="intensity_select" min="1" max="15" step="0.5">
+								<input type="text" id="intensity_value" class="value_display"/>
 							</div>
 						</item>
 						<!-- Texture's mode selection -->
@@ -84,36 +92,35 @@
 								</select>
 							</div>
 						</item>
+						<!-- Frosted Mirror mode toggle -->
+						<item id="frosted_mirror_checkbox" style="display: none;">
+							<div class="row checkbox">
+								<label for="frosted_checkbox">Frosted mirror</label>
+								<input type="checkbox" id="frosted_checkbox">
+							</div>
+						</item>
 						<!-- Fresnel slider input -->
 						<item id="fresnel" style="display: none;">
-							<div class="row">
-								<label for="fresnel_coeff">nI:</label>
+							<div class="row slider">
+								<label for="fresnel_coeff">Refractive index</label>
 								<input type="range" id="fresnel_coeff" name="fresnel_coeff" min="1.0" max="2.0" step="0.01">
 								<input type="text" id="fresnel_coeff_value" class="value_display"/>
 							</div>
 						</item>
 						<!-- Sigma slider input -->
 						<item id="sigma" style="display: none;">
-							<div class="row">
-								<label for="sigma_select">sigma:</label>
+							<div class="row slider">
+								<label for="sigma_select">Roughness</label>
 								<input type="range" id="sigma_range_select" name="sigma_select" min="0.0001" max="0.5" step="0.01">
 								<input type="text" id="sigma_value" class="value_display"/>
 							</div>
 						</item>
 						<!-- Number of samples slider input -->
 						<item id="N" style="display: none;">
-							<div class="row">
-								<label for="samples_select">N:</label>
+							<div class="row slider">
+								<label for="samples_select">Number of samples</label>
 								<input type="range" id="sampling_range_select" name="sampling_select" min="1" max="100" step="1">
 								<input type="text" id="sampling_value" class="value_display"/>
-							</div>
-						</item>
-						<!-- Light intensity slider input -->
-						<item id="light_intensity" style="display: none;">
-							<div class="row">
-								<label for="light_intensity">Light intensity:</label>
-								<input type="range" id="intensity_range_select" name="intensity_select" min="1" max="15" step="0.5">
-								<input type="text" id="intensity_value" class="value_display"/>
 							</div>
 						</item>
 					</div>
