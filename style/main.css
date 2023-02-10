@@ -76,8 +76,8 @@ html, body {
     border: none;
     cursor: pointer;
     position: relative;
-    left: 13rem;
-    bottom: 1rem;
+    left: 12.5rem;
+    bottom: 0.7rem;
     height: 5%;
 }
 #close_menu_btn:hover {

@@ -31,6 +31,12 @@ const DEFAULT_SAMPLES = {
     default: 1
 };
 
+// Light
+const DEFAULT_LIGHT = {
+    min: 5.0, max: 15.0,
+    default: 5.0
+};
+
 class controller {
 
     constructor() {
@@ -41,8 +47,9 @@ class controller {
         this.FRESNEL_INDICE     = DEFAULT_FRESNEL.default;
         this.SIGMA              = DEFAULT_SIGMA.default;
         this.SAMPLES_NUMBER     = DEFAULT_SAMPLES.default;
-        this.LIGHT_INTENSITY    = 5.0;
+        this.LIGHT_INTENSITY    = DEFAULT_LIGHT.default;
         this.isSampling         = false;
+        this.isFrostedMirror    = false;
     }
 
     // Environment
@@ -64,8 +71,21 @@ class controller {
     }
 
     // Configurations
-    setDefault() { this.isSampling = false; }
-    setSampling() { this.isSampling = true; }
+    
+    setDefault() { 
+        this.isSampling = this.isFrostedMirror = false;
+    }
+
+    setSampling() {
+        this.isSampling = true;
+        this.isFrostedMirror = false;
+    
+    }
+    
+    setFrostedMirror() {
+        this.isFrostedMirror = true;
+        this.isSampling = false;
+    }
 
     // Options
 
@@ -84,11 +104,16 @@ class controller {
             (nbSamples >= DEFAULT_SAMPLES.min && nbSamples <= DEFAULT_SAMPLES.max) ? nbSamples : this.SAMPLES_NUMBER;
     }
 
+    setLightIntensity(intensity) {
+        this.LIGHT_INTENSITY = intensity < 0 ? this.LIGHT_INTENSITY : intensity;
+    }
+
     updateValue(target, value) {
         switch (target) {
             case "FRESNEL": this.setFresnel(value); break;
             case "SIGMA": this.setSigma(value); break;
             case "SAMPLES": this.setSamplesNumber(value); break;
+            case "LIGHT_INTENSITY": this.setLightIntensity(value); break;
         }
         console.log("Update " + target + " to " + value)
     }
@@ -98,6 +123,7 @@ class controller {
             case "FRESNEL": return this.FRESNEL_INDICE;
             case "SIGMA": return this.SIGMA;
             case "SAMPLES": return this.SAMPLES_NUMBER;
+            case "LIGHT_INTENSITY": return this.LIGHT_INTENSITY;
         }
     }
 
@@ -106,6 +132,7 @@ class controller {
             case "FRESNEL": return DEFAULT_FRESNEL.min;
             case "SIGMA": return DEFAULT_SIGMA.min;
             case "SAMPLES": return DEFAULT_SAMPLES.min;
+            case "LIGHT_INTENSITY": return DEFAULT_LIGHT.min;
         }
     }
 
@@ -114,6 +141,7 @@ class controller {
             case "FRESNEL": return DEFAULT_FRESNEL.max;
             case "SIGMA": return DEFAULT_SIGMA.max;
             case "SAMPLES": return DEFAULT_SAMPLES.max;
+            case "LIGHT_INTENSITY": return DEFAULT_LIGHT.max;
         }
     }
 

@@ -79,19 +79,22 @@ class objmesh {
 		// Settting
 		this.shader.uSamplerUniform = gl.getUniformLocation(this.shader, "uSampler");
 		this.shader.uIsSamplingUniform = gl.getUniformLocation(this.shader, "uIsSampling");
+		this.shader.uIsFrostedMirrorUniform = gl.getUniformLocation(this.shader, "uIsFrostedMirror");
 		this.shader.uSigmaUniform = gl.getUniformLocation(this.shader, "uSigma");
 		this.shader.uFresnelIndiceUniform = gl.getUniformLocation(this.shader, "uFresnelIndice");
 		this.shader.uNbSamplesUniform = gl.getUniformLocation(this.shader, "uNbSamples");
 		this.shader.uLightIntensityUniform = gl.getUniformLocation(this.shader, "uLightIntensity");
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
+		
+		gl.uniform1i(this.shader.uIsSamplingUniform, CONTROLLER.isSampling && CONTROLLER.isThereSkybox);
+		gl.uniform1i(this.shader.uIsFrostedMirrorUniform, CONTROLLER.isFrostedMirror);
+
 		gl.uniform1f(this.shader.uFresnelIndiceUniform, CONTROLLER.FRESNEL_INDICE);
 		gl.uniform1f(this.shader.uSigmaUniform, CONTROLLER.SIGMA);
 		gl.uniform1i(this.shader.uNbSamplesUniform, CONTROLLER.SAMPLES_NUMBER);
 		
 		gl.uniform1f(this.shader.uLightIntensityUniform, CONTROLLER.LIGHT_INTENSITY);
-	
-		gl.uniform1i(this.shader.uIsSamplingUniform, CONTROLLER.isSampling && CONTROLLER.isThereSkybox);
 	}
 
 	// --------------------------------------------

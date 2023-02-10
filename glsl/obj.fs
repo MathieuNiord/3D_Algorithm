@@ -8,6 +8,7 @@ uniform mat4 uRotationMatrix;
 
 // Modes
 uniform bool uIsSampling;
+uniform bool uIsFrostedMirror;
 
 // Parameters
 uniform float uFresnelIndice;
@@ -21,6 +22,9 @@ uniform vec3 uColor;
 
 #define PI 3.1415926535897932384626433832795
 #define MAX_INTEGER 2147483647
+#define SEED_X 12.9898
+#define SEED_Y 78.233
+#define SEED_FACTOR 43758.5453
 
 // ==============================================
 /* Compute the dot product of two vectors-3
@@ -30,14 +34,14 @@ float ddot(vec3 a, vec3 b) { return max(0.0, dot(a, b)); }
 // ==============================================
 /* Compute a random number thanks to the uv
  * coordinates of the fragment */
-float getRandom(in vec2 uv){
+float getRandom(in vec2 state, float seed){
 	return fract(
 		sin(
-			dot(
-				uv, 
-				vec2(12.9898,78.233)
+			seed + dot(
+				state, 
+				vec2(SEED_X, SEED_Y)
 			)
-		) * 43758.5453
+		) * SEED_FACTOR
 	);
 }
 
@@ -51,7 +55,9 @@ float fresnelFactor(vec3 i, vec3 m) {
 	float g = sqrt((uFresnelIndice * uFresnelIndice) + (c * c) - 1.0);
 
 	// Left and right side of the formula
+	// (1/2) * (g - c)² / (g + c)²
 	float left = 0.5 * (((g - c) * (g - c)) / ((g + c) * (g + c)));
+	// 1.0 + (c * (g + c) - 1.0)² / (c * (g - c) + 1.0)²
 	float right = 1.0 + (((c * (g + c) - 1.0) * (c * (g + c) - 1.0)) / ((c * (g - c) + 1.0) * (c * (g - c) + 1.0)));
 
 	return left * right;
@@ -93,88 +99,77 @@ float distributionTerm(vec3 n, vec3 m) {
 /* Compute the rotation of a vector (m) thanks to
  * the normals vector (N) */
 vec3 rotate(vec3 m, vec3 N) {
-  vec3 i = vec3( 1.0, 0.0, 0.0);
-  if (ddot(i, N) > 0.9) { i = vec3(0.0, 1.0, 0.0); }
-  vec3 j = cross(N, i);
-  i = cross(j, N);
-  return mat3( i, j, N) * m;
-}
 
+	vec3 i = vec3( 1.0, 0.0, 0.0);
 
-/* vec3 frostedMirror(const int nbSamples, vec3 n, vec3 o) {
-
-	for(int i = 0; i < MAX_INTEGER; i++) {
-
-		if (i >= nbr) break;
-
-		float rand1 = getRandom(pos3D.xy + float(i));
-    	float rand2 = getRandom(pos3D.xy + rand1);
-
-		float Phim = 2.0 * PI * rand1;
-
-		float Thetam = atan(sqrt(-pow(uSigma * uSigma) * log(1.0 - rand2)));
-		vec3 M = vec3(sin(Thetam) * cos(Phim), sin(Thetam) * sin(Phim), cos(Thetam));
-
-		mat3 MatRot = createLocalMatrix(N, Vo);
-		vec3 Mfinal = MatRot * M;
-
-		vec3 directionReflect = mat3(uIRMatrix) * reflect(-M, Normal);
-		col += vec4(textureCube(u_skybox, directionReflect.xzy).xyz, 1.0);
+	if (ddot(i, N) > 0.9) {
+		i = vec3(0.0, 1.0, 0.0);
 	}
 
-	color /= float(nbr);
+	vec3 j = cross(N, i);
 
-	return vec3(0.0, 0.0, 0.0);
-} */
+	i = cross(j, N);
+
+	return mat3( i, j, N) * m;
+}
 
 // ==============================================
 /* Compute the sampling of the BRDF */
 vec3 getSampling(const int nbSamples, vec3 n, vec3 o){
   
-  vec3 color = uColor;
+	vec3 color = uColor;
 
-  for (int i = 0; i < MAX_INTEGER; i++) {
+	for (int i = 0; i < MAX_INTEGER; i++) {
 
-	if (i >= nbSamples) { break; }
+		if (i >= nbSamples) { break; }
 
-    float rand1 = getRandom(pos3D.xy + float(i));
-    float rand2 = getRandom(pos3D.xy + rand1);
+		float x_rand = getRandom(pos3D.xy, float(i));
+		float y_rand = getRandom(pos3D.xy, x_rand);
 
-    float phi = rand1 * 2.0 * PI;
-    float theta = atan(sqrt(-(uSigma * uSigma) * log(1.0 - rand2)));
+		float phi = x_rand * 2.0 * PI;
+		float theta = atan(sqrt(-(uSigma * uSigma) * log(1.0 - y_rand)));
 
-    float x = sin(theta) * cos(phi);
-    float y = sin(theta) * sin(phi);
-    float z = cos(theta);
-    
-    vec3 m = vec3(x, y, z);
-    m = rotate(m, n);
-    m = normalize(m);
+		float x = sin(theta) * cos(phi);
+		float y = sin(theta) * sin(phi);
+		float z = cos(theta);
+		
+		vec3 m = normalize(
+			rotate(
+				vec3(x, y, z),
+				n
+			)
+		);
 
-    float D = distributionTerm(n, m);
-    float cosThetaM = ddot(m, n);
-	if (cosThetaM <= 0.0) { continue; }
+		float D = distributionTerm(n, m);
+		float cos_theta = ddot(m, n);
+		if (cos_theta <= 0.0) { continue; }
 
-    float pdf = D * cosThetaM;
+		float pdf = D * cos_theta;
 
-    vec3 Icam = reflect(-o,m);
-    float IN = ddot(Icam,n);
-	if (IN <= 0.0) { continue; }
+		vec3 i_camera = reflect(-o, m);
+		float _in = ddot(i_camera, n);
+		if (_in <= 0.0) { continue; }
 
-    vec3 Iobj = (mat3(uRotationMatrix) * Icam).xzy;
-    vec3 colorFinal = textureCube(uSampler, Iobj).xyz;
+		vec3 i_object = (mat3(uRotationMatrix) * i_camera).xzy;
+		vec3 colorFinal = textureCube(uSampler, i_object).xyz;
 
-    float F = fresnelFactor(Icam, m);
-    float G = geometryTerm(o, Icam, n, m);
-    float ON = ddot(o, n);
-	if (ON <= 0.0) { continue; }
+		vec3 BRDF = vec3(0.0, 0.0, 0.0);
 
-    vec3 BRDF = vec3((F * D * G) / (4.0 * IN * ON));
+		if (!uIsFrostedMirror)
+		{
+			float F = fresnelFactor(i_camera, m);
+			float G = geometryTerm(o, i_camera, n, m);
 
-    color += colorFinal * IN / pdf;
-  }
+			float _on = ddot(o, n);
+			if (_on <= 0.0) { continue; }
 
-  return (color / float(nbSamples));
+			BRDF = vec3((F * D * G) / (4.0 * _in * _on));
+		}
+
+		color += (colorFinal * BRDF * _in) / pdf;
+	}
+
+	return (color / float(nbSamples));
 }
 
 
@@ -192,13 +187,11 @@ void main(void) {
 		),1.0
 	);
 
-	if (uIsSampling){
-		int nbSamples = uNbSamples;
+	if (uIsSampling || uIsFrostedMirror){
+		int nbSamples = uNbSamples; // Parsing the number of samples
     	vec3 sampling = getSampling(nbSamples, n, o);
     	color = vec4(sampling * uLightIntensity, 1.0);
 	}
-
-	//if(uIsMiroirDepoli) {}
 	
-	gl_FragColor = color;
+	gl_FragColor = color * uLightIntensity;
 }

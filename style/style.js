@@ -21,10 +21,13 @@ var sigmaSlider = doc.getElementById('sigma_range_select');
 var sigmaValue = doc.getElementById('sigma_value');
 var samplingSlider = doc.getElementById('sampling_range_select');
 var samplingValue = doc.getElementById('sampling_value');
+var lightIntensitySlider = doc.getElementById('intensity_range_select');
+var lightIntensityValue = doc.getElementById('intensity_value');
 const controllerUpdatersConfig = [
     { slider: fresnelSlider,    numberInput: fresnelValue,    target: 'FRESNEL'   },
     { slider: sigmaSlider,      numberInput: sigmaValue,      target: 'SIGMA'     },
-    { slider: samplingSlider,   numberInput: samplingValue,   target: 'SAMPLES'   }
+    { slider: samplingSlider,   numberInput: samplingValue,   target: 'SAMPLES'   },
+    { slider: lightIntensitySlider, numberInput: lightIntensityValue, target: 'LIGHT_INTENSITY' }
 ];
 // ==========================================================
 
@@ -116,13 +119,18 @@ function closeMenu() {
  * Show the Fresnel and Sigma part
  */
 function showSliders() {
-    var fresnel = doc.getElementById('fresnel');
-    var sigma = doc.getElementById('sigma');
+
+    var Fresnel = doc.getElementById('fresnel');
+    var Sigma = doc.getElementById('sigma');
     var N = doc.getElementById('N');
-    fresnel.style.display =
-    sigma.style.display =
-    N.style.display =
-    (CONTROLLER.isSampling ? 'block' : 'none');
+    var Intensity = doc.getElementById('light_intensity');
+
+    // Setting up the display of the sliders
+    Fresnel.style.display
+        = Sigma.style.display
+        = N.style.display
+        = Intensity.style.display
+        = (CONTROLLER.isSampling ? 'block' : 'none');
 }
 
 /**
