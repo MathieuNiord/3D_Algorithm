@@ -64,11 +64,11 @@
 							<div class="row">
 								<label for="models_select">Objects</label>
 								<select id="models_select" name="Objects" class="selector" onload="this.selectedIndex = 0;">
-									<option onclick="OBJ1 = null;" selected>None</option>
+									<option onclick="CONTROLLER.OBJECT = null;" selected>None</option>
 								</select>
 							</div>
 						</item>
-						<item>
+						<item id="color_picker">
 							<div class="row">
 								<label for="color">Colors:</label>
 								<input type="color" class="color_picker" id="model_color" name="color" value="#000000" oninput="CONTROLLER.setColor(this.value);">
@@ -86,16 +86,16 @@
 						<item>
 							<div class="row">
 								<label for="texture_select">Texture:</label>
-								<select id="texture_select" name="Textures" class="selector" onclick="showSliders();">
-									<option value="0" onclick="CONTROLLER.setDefault();" selected>None</option>
-									<option onclick="CONTROLLER.setSampling();">Echantillonage</option>	
+								<select id="texture_select" name="Textures" class="selector" onchange="handleMode(this.value);">
+									<option value="LAMBERT" selected>Lambert</option>
+									<option value="SAMPLING">Sampling</option>
 								</select>
 							</div>
 						</item>
 						<!-- Frosted Mirror mode toggle -->
 						<item id="frosted_mirror_checkbox" style="display: none;">
 							<div class="row checkbox">
-								<label for="frosted_checkbox">Frosted mirror</label>
+								<label for="frosted_checkbox">Disable Fresnel</label>
 								<input type="checkbox" id="frosted_checkbox">
 							</div>
 						</item>

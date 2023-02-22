@@ -153,8 +153,6 @@ vec3 getSampling(const int nbSamples, vec3 n, vec3 o){
 		vec3 i_object = (mat3(uRotationMatrix) * i_camera).xzy;
 		vec3 colorFinal = textureCube(uSampler, i_object).xyz;
 
-		vec3 BRDF = vec3(1.0);
-
 		// Process BSDF if the object is not a frosted mirror
 		if (uIsFrostedMirror) color += colorFinal;
 		else
@@ -165,7 +163,7 @@ vec3 getSampling(const int nbSamples, vec3 n, vec3 o){
 			float _on = ddot(o, n);
 			if (_on <= 0.0) { continue; }
 
-			BRDF = vec3((F * D * G) / (4.0 * _in * _on));
+			vec3 BRDF = vec3((F * D * G) / (4.0 * _in * _on));
 			
 			color += (colorFinal * BRDF * _in) / pdf;
 		}

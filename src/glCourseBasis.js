@@ -87,7 +87,7 @@ class objmesh {
 
 		gl.uniform1i(this.shader.uSamplerUniform, 0);
 		gl.uniform1i(this.shader.uIsSamplingUniform, CONTROLLER.isSampling && CONTROLLER.isThereSkybox);
-		gl.uniform1i(this.shader.uIsFrostedMirrorUniform, CONTROLLER.isFrostedMirror);
+		gl.uniform1i(this.shader.uIsFrostedMirrorUniform, CONTROLLER.isFrostedMirror && CONTROLLER.isThereSkybox);
 
 		gl.uniform1f(this.shader.uFresnelIndiceUniform, CONTROLLER.FRESNEL_INDICE);
 		gl.uniform1f(this.shader.uSigmaUniform, CONTROLLER.SIGMA);

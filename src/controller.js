@@ -33,7 +33,7 @@ const DEFAULT_SAMPLES = {
 
 // Light
 const DEFAULT_LIGHT = {
-    min: 5.0, max: 15.0,
+    min: 1, max: 15.0,
     default: 5.0
 };
 
@@ -48,6 +48,7 @@ class controller {
         this.SIGMA              = DEFAULT_SIGMA.default;
         this.SAMPLES_NUMBER     = DEFAULT_SAMPLES.default;
         this.LIGHT_INTENSITY    = DEFAULT_LIGHT.default;
+        this.isLambert          = true;
         this.isSampling         = false;
         this.isFrostedMirror    = false;
     }
@@ -55,56 +56,68 @@ class controller {
     // Environment
 
     setObject(object) {
-        this.OBJECT =
-            (object !== this.OBJECT) ? object : this.OBJECT;
+        if (object !== this.OBJECT) this.OBJECT = object;
     }
 
     setScene(scene) {
-        this.SCENE =
-            (scene !== this.SCENE) ? scene : this.SCENE;
+        if (scene !== this.SCENE) this.SCENE = scene;
     }
 
     setColor(color) {
         let newColor = hexToRgb(color);
-        this.COLOR =
-            (newColor !== this.COLOR) ? newColor : this.COLOR;
+        if (newColor !== this.COLOR) this.COLOR = newColor;
     }
 
     // Configurations
     
-    setDefault() { 
+    setLambert() { 
+        this.isLambert = true;
         this.isSampling = this.isFrostedMirror = false;
     }
 
     setSampling() {
         this.isSampling = true;
-        this.isFrostedMirror = false;
+        this.isFrostedMirror = this.isLambert = false;
     }
     
     setFrostedMirror() {
         this.isFrostedMirror = true;
-        this.isSampling = false;
+        this.isSampling = this.isLambert = false;
+    }
+
+    setConfiguration(mode) {
+        switch (mode) {
+            case "LAMBERT": this.setLambert(); break;
+            case "SAMPLING": this.setSampling(); break;
+            case "FROSTED": this.setFrostedMirror(); break;
+            default: this.setLambert(); break;
+        }
     }
 
     // Options
 
     setFresnel(fresnel) {
-        this.FRESNEL_INDICE =
-            (fresnel >= DEFAULT_FRESNEL.min && fresnel <= DEFAULT_FRESNEL.max) ? fresnel : this.FRESNEL_INDICE;
+        if (fresnel >= DEFAULT_FRESNEL.min && fresnel <= DEFAULT_FRESNEL.max) {
+            this.FRESNEL_INDICE = fresnel;
+        }
     }
 
     setSigma(sigma) {
-        this.SIGMA =
-            (sigma >= DEFAULT_SIGMA.min && sigma <= DEFAULT_SIGMA.max) ? sigma : this.SIGMA;
+        if (sigma >= DEFAULT_SIGMA.min && sigma <= DEFAULT_SIGMA.max) {
+            this.SIGMA = sigma;
+        }
     }
     
     setSamplesNumber(nbSamples) {
-        this.SAMPLES_NUMBER =
-            (nbSamples >= DEFAULT_SAMPLES.min && nbSamples <= DEFAULT_SAMPLES.max) ? nbSamples : this.SAMPLES_NUMBER;
+        if (nbSamples >= DEFAULT_SAMPLES.min && nbSamples <= DEFAULT_SAMPLES.max) {
+            this.SAMPLES_NUMBER = nbSamples;
+        }
     }
 
     setLightIntensity(intensity) {
-        this.LIGHT_INTENSITY = intensity < 0 ? this.LIGHT_INTENSITY : intensity;
+        if (intensity >= DEFAULT_LIGHT.min && intensity <= DEFAULT_LIGHT.max) {
+            this.LIGHT_INTENSITY = intensity;
+        }
     }
 
     updateValue(target, value) {
@@ -114,7 +127,6 @@ class controller {
             case "SAMPLES": this.setSamplesNumber(value); break;
             case "LIGHT_INTENSITY": this.setLightIntensity(value); break;
         }
-        console.log("Update " + target + " to " + value)
     }
 
     getValue(target) {
