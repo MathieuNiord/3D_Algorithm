@@ -174,20 +174,36 @@ function switchScene(evt, Name) {
 function handleMode(mode) {
     // If the sampling mode was enabled and the fresnel was disabled,
     // then uncheck the checkbox
-    if (CONTROLLER.isFrostedMirror) frostedMirrorModeCheckbox.checked = false;
+    if (CONTROLLER.isFrostedMirror) {
+        frostedMirrorModeCheckbox.checked = false;
+    }
     // Update the mode
     CONTROLLER.setConfiguration(mode);
     // If the sammpling mode is enabled in any way,
     // then change color to black
     if (CONTROLLER.isSampling || CONTROLLER.isFrostedMirror) {
         CONTROLLER.setColor('#000000');
-        if (CONTROLLER.isFrostedMirror) CONTROLLER.setLightIntensity(1);
-        else if (CONTROLLER.isSampling) CONTROLLER.setSamplesNumber(samplingSlider.value);
+        if (CONTROLLER.isFrostedMirror) {
+            CONTROLLER.setLightIntensity(1);
+        }
+        else if (CONTROLLER.isSampling) {
+            CONTROLLER.setSamplesNumber(samplingSlider.value);
+        }
     }
-    else CONTROLLER.setColor(modelColorPicker.value);
-    if (!CONTROLLER.isFrostedMirror) CONTROLLER.setLightIntensity(lightIntensitySlider.value);
-    if (!CONTROLLER.isSampling) CONTROLLER.setSamplesNumber(1);
-    // Update fields
+    // Else reset color to the defined value
+    else {
+        CONTROLLER.setColor(modelColorPicker.value);
+    }
+    // If the sampling mode is enabled, and fresnel is disabled,
+    // then disable the light intensity slider (no need)
+    if (!CONTROLLER.isFrostedMirror) {
+        CONTROLLER.setLightIntensity(lightIntensitySlider.value);
+    }
+    // If the sampling mode is disabled, then reset the number of samples to 1
+    if (!CONTROLLER.isSampling) {
+        CONTROLLER.setSamplesNumber(1);
+    }
+    // Finally update fields
     showFields();
 }
 
