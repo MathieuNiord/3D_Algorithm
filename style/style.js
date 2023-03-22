@@ -1,36 +1,40 @@
 /** @author Frejoux Gaetan, Niord Mathieu */
 
-var doc = document;
+let doc = document;
 
-var openMenuBtn = doc.getElementById('open_menu_btn');
-var closeBtn = doc.getElementById('close_menu_btn');
-var menu = doc.getElementById('menu__content');
-var dropdowns = doc.getElementsByClassName('dropdown');
+let openMenuBtn = doc.getElementById('open_menu_btn');
+let closeBtn = doc.getElementById('close_menu_btn');
+let menu = doc.getElementById('menu__content');
+let dropdowns = doc.getElementsByClassName('dropdown');
 
 // Selectors / Mutators
-var selects = doc.getElementsByClassName('selector');
-var planeToggle = doc.getElementById('plane_checkbox');
-var modelColorPicker = doc.getElementById('model_color');
-var lightColorPicker = doc.getElementById('light_color');
-var skyboxCheckBox = doc.getElementById('skybox_checkbox');
+let selects = doc.getElementsByClassName('selector');
+let planeToggle = doc.getElementById('plane_checkbox');
+let modelColorPicker = doc.getElementById('model_color');
+let frostedMirrorModeCheckbox = doc.getElementById('frosted_checkbox');
+let skyboxCheckBox = doc.getElementById('skybox_checkbox');
 
 // Sliders
 // ==========================================================
-var fresnelSlider = doc.getElementById('fresnel_coeff');
-var fresnelValue = doc.getElementById('fresnel_coeff_value');
-var sigmaSlider = doc.getElementById('sigma_range_select');
-var sigmaValue = doc.getElementById('sigma_value');
-var intensitySlider = doc.getElementById('intensity_range_select');
-var intensityValue = doc.getElementById('intensity_value');
+let fresnelSlider = doc.getElementById('fresnel_coeff');
+let fresnelValue = doc.getElementById('fresnel_coeff_value');
+let sigmaSlider = doc.getElementById('sigma_range_select');
+let sigmaValue = doc.getElementById('sigma_value');
+let samplingSlider = doc.getElementById('sampling_range_select');
+let samplingValue = doc.getElementById('sampling_value');
+let lightIntensitySlider = doc.getElementById('intensity_range_select');
+let lightIntensityValue = doc.getElementById('intensity_value');
+
 const controllerUpdatersConfig = [
-    { slider: fresnelSlider,    numberInput: fresnelValue,    target: 'FRESNEL'   },
-    { slider: sigmaSlider,      numberInput: sigmaValue,      target: 'SIGMA'     },
-    { slider: intensitySlider,  numberInput: intensityValue,  target: 'INTENSITY' }
+    { slider: fresnelSlider,        numberInput: fresnelValue,          target: 'FRESNEL'           },
+    { slider: sigmaSlider,          numberInput: sigmaValue,            target: 'SIGMA'             },
+    { slider: samplingSlider,       numberInput: samplingValue,         target: 'SAMPLES'           },
+    { slider: lightIntensitySlider, numberInput: lightIntensityValue,   target: 'LIGHT_INTENSITY'   }
 ];
 // ==========================================================
 
 // Gallery
-var gallery = doc.getElementById('gallery');
+let gallery = doc.getElementById('gallery');
 
 // Loaders
 const ObjectLoader = [ 'Bunny', 'Mustang', 'Porsche', 'Sphere' ]; // 3D Models
@@ -41,6 +45,19 @@ const IMAGES_SRC = SKYBOX_TEXTURES_URL;
 const DEFAULT_IMAGE_PREVIEW = 'pos-z.jpg';
 const DEFAULT_IMAGE_WIDTH = 48;
 const DEFAULT_IMAGE_HEIGHT = 48;
+
+/**
+ * Returns the list of elements to show or hide based on the 'condition' property
+ * @returns {Array} - The list of elements to show or hide
+ */
+const getShowableElements = () => [
+    { field: doc.getElementById('color_picker'),            condition: (!CONTROLLER.isSampling && !CONTROLLER.isFrostedMirror)  }, // Color Picker
+    { field: doc.getElementById('light_intensity'),         condition: !CONTROLLER.isFrostedMirror                              }, // Light Intensity
+    { field: doc.getElementById('frosted_mirror_checkbox'), condition: CONTROLLER.isSampling || CONTROLLER.isFrostedMirror      }, // Plane
+    { field: doc.getElementById('fresnel'),                 condition: CONTROLLER.isSampling                                    }, // Fresnel indice
+    { field: doc.getElementById('sigma'),                   condition: CONTROLLER.isSampling || CONTROLLER.isFrostedMirror      }, // Sigma
+    { field: doc.getElementById('N'),                       condition: CONTROLLER.isSampling || CONTROLLER.isFrostedMirror      }  // Sampling
+];
 
 /**
  * Open / Close a dropdow menu
@@ -96,7 +113,6 @@ function updateNumberInputValue(numberInput, slider, target) {
     CONTROLLER.updateValue(target, value);
 }
 
-
 /**
  * Open the Menu
  */
@@ -114,19 +130,20 @@ function closeMenu() {
 }
 
 /**
- * Show the Fresnel and Sigma part
+ * Hide/show fields that are not relevant to the current configuration
  */
-function showFresnelAndSigma() {
-    var fresnel = document.getElementById('fresnel');
-    var sigma = document.getElementById('sigma');
-    fresnel.style.display = CONTROLLER.isTransmitting || CONTROLLER.isCookTorrance ? 'block' : 'none';
-    sigma.style.display = CONTROLLER.isCookTorrance ? 'block' : 'none';
+function showFields() {
+    getShowableElements().forEach(({ field, condition }) => {
+        if (condition) field.style.display = 'block';
+        else field.style.display = 'none';
+    });
 }
 
 /**
  * Switch the skybox scene
  * @param {Event} evt - The on-click event
  * @param {String} Name - The name of the scene to switch to
+ * @returns {void}
  */
 function switchScene(evt, Name) {
 
@@ -147,6 +164,69 @@ function switchScene(evt, Name) {
     CONTROLLER.setScene(Name);
     delete SKYBOX;
     SKYBOX = new cubemap();
+}
+
+/**
+ * Change the color of the model
+ * @param mode - The controller mode (lambert, reflection, refraction, cook-torrance, sampling)
+ * @returns {void}
+ */
+function handleMode(mode) {
+    // If the sampling mode was enabled and the fresnel was disabled,
+    // then uncheck the checkbox
+    if (CONTROLLER.isFrostedMirror) {
+        frostedMirrorModeCheckbox.checked = false;
+    }
+    // Update the mode
+    CONTROLLER.setConfiguration(mode);
+    // If the sammpling mode is enabled in any way,
+    // then change color to black
+    if (CONTROLLER.isSampling || CONTROLLER.isFrostedMirror) {
+        CONTROLLER.setColor('#000000');
+        if (CONTROLLER.isFrostedMirror) {
+            CONTROLLER.setLightIntensity(1);
+        }
+        else if (CONTROLLER.isSampling) {
+            CONTROLLER.setSamplesNumber(samplingSlider.value);
+        }
+    }
+    // Else reset color to the defined value
+    else {
+        CONTROLLER.setColor(modelColorPicker.value);
+    }
+    // If the sampling mode is enabled, and fresnel is disabled,
+    // then disable the light intensity slider (no need)
+    if (!CONTROLLER.isFrostedMirror) {
+        CONTROLLER.setLightIntensity(lightIntensitySlider.value);
+    }
+    // If the sampling mode is disabled, then reset the number of samples to 1
+    if (!CONTROLLER.isSampling) {
+        CONTROLLER.setSamplesNumber(1);
+    }
+    // Finally update fields
+    showFields();
+}
+
+/**
+ * Handle the change of the skybox checkbox
+ * @param {Event} evt - The on-click event
+ * @returns {void} 
+ */
+function toggleSkybox(evt) {
+    let checked = evt.target.checked;
+    CONTROLLER.isThereSkybox = checked;
+    if (checked) {
+        selects[1].querySelectorAll('option').forEach(option => {
+            option.disabled = false; // Enabling modes inside the selector
+        });
+    }
+    else {
+        handleMode('LAMBERT'); // Resetting the mode to Lambert
+        selects[1].querySelectorAll('option').forEach(option => {
+            option.disabled = true; // Disabling modes inside the selector
+        });
+        selects[1].value = 'LAMBERT'; // Setting selected option to Lambert
+    }
 }
 
 /**
@@ -187,7 +267,6 @@ function initUI() {
 
     // Reset color pickers to default value
     modelColorPicker.value = rgbToHex(CONTROLLER.COLOR);
-    lightColorPicker.value = rgbToHex(CONTROLLER.LIGHT_COLOR);
     
     // Reset select menus
     for (var i = 0; i < selects.length; i++) {
@@ -196,14 +275,19 @@ function initUI() {
 
     // Reset the plane checkbox
     planeToggle.checked = CONTROLLER.isTherePlane;
-    planeToggle.addEventListener('change', function () {
+    planeToggle.addEventListener('input', function () {
         CONTROLLER.isTherePlane = this.checked;
     });
 
     // Reset the skybox checkbox
     skyboxCheckBox.checked = CONTROLLER.isThereSkybox;
-    skyboxCheckBox.addEventListener('change', function () {
-        CONTROLLER.isThereSkybox = this.checked;
+    skyboxCheckBox.addEventListener('input', toggleSkybox);
+
+    // Reset the frosted mirror checkbox
+    frostedMirrorModeCheckbox.checked = CONTROLLER.isFrostedMirror;
+    frostedMirrorModeCheckbox.addEventListener('input', function () {
+        if (this.checked) handleMode('FROSTED');
+        else handleMode('SAMPLING');
     });
 
     // Reset sliders and bind them to their target value
@@ -217,7 +301,8 @@ function initUI() {
                 updateNumberInputValue(
                     event.target, 
                     config.slider, 
-                    config.target);
+                    config.target
+                );
         });
     });
 
